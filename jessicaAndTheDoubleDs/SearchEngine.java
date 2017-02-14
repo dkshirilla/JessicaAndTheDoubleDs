@@ -2,14 +2,13 @@
  * Douglas Linkhart, and Brandon Quijano
  * Java II 2017 Project 3 - Search Engine:
  * creating a GUI file search
- * that includes file upload and delete tools.
+ * that includes file upload and deletion tools.
  */
 package jessicaAndTheDoubleDs; // Team name
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-
 
 public class SearchEngine extends JPanel implements ActionListener{	
 	
@@ -21,6 +20,13 @@ public class SearchEngine extends JPanel implements ActionListener{
 			andBtnSelected    = false,
 			phraseBtnSelected = false;
 	
+	// These need to be accessible outside of the SearchEngine method
+	JTextField txtSearchTerms = new JTextField( "Enter search terms here", 40 );
+	JTextArea txtResults = new JTextArea(22, 40);
+	
+	// Search Terms
+	StringBuilder sbStringToParse = new StringBuilder();
+	
 	public SearchEngine(){
 		//used to set tabs to top left
 		super (new GridLayout(1,1));
@@ -29,25 +35,26 @@ public class SearchEngine extends JPanel implements ActionListener{
 		JTabbedPane tabbedPane = new JTabbedPane();
 		
 		// Add Search panel
-		JComponent searchPanel = textPanel( "<html> Search Panel &nbsp; </html>" );
-		//add tab and associated filler component
+		JComponent searchPanel = textPanel( "" );
+		// Add Search tab
 		tabbedPane.addTab("Search", searchPanel);
+		
+		// Add border to Search Term text box
+		txtSearchTerms.setBorder(BorderFactory.createLineBorder(Color.black));
+		// Add Search Terms text box to panel
+		searchPanel.add(txtSearchTerms);
 		
 		// Create buttons
 		JButton btnSearch = new JButton( "Search" );
-		
-		//Create Search Bar
-		JTextField textField = new JTextField(" ", 20);
-		textField.setActionCommand("search");
-		textField.addActionListener( this );
-		
-        /* To use absolute layout, use this code:
+			
+        /*To use absolute layout, use this code:
  		searchPanel.setLayout(null);
 		btnSearch.setBounds(50, 50, 100, 100); 
 		This also kills the initial panel text,
 		but it could be put back with a label */ 
 		
-	    btnSearch.setActionCommand( "Search Bar " ); 
+		// add a comment here
+	    btnSearch.setActionCommand( "search" ); 
 	    btnSearch.addActionListener( this );
 	    
 	    JRadioButton btnOr     = new JRadioButton( "OR" );
@@ -72,16 +79,24 @@ public class SearchEngine extends JPanel implements ActionListener{
 		searchPanel.add( btnOr );
 		searchPanel.add( btnAnd );
 		searchPanel.add( btnPhrase );
-		searchPanel.add( textField );
 		
 		// Set buttons to according to status that was initialized previously
 		btnOr.setSelected( orBtnSelected );
 		btnAnd.setSelected( andBtnSelected );
 		btnPhrase.setSelected( phraseBtnSelected );
 		
-		//add filler component
+		// Add result text area to show matched files when search is completed
+		// Set line wrapping
+		txtResults.setLineWrap(true);
+		txtResults.setWrapStyleWord(true);
+		// Add border to Results box
+		txtResults.setBorder(BorderFactory.createLineBorder(Color.black));
+		// Add Results box to panel
+		searchPanel.add(txtResults);
+		
+		// Add File Upload/Update panel
 		JComponent files = textPanel("File upload/update panel");
-		//add tab and associated filler component
+		// Add Files tab 
 		tabbedPane.addTab("Files", files);
 		
 		// Build string for About tab using HTML
@@ -110,12 +125,13 @@ public class SearchEngine extends JPanel implements ActionListener{
 		tabbedPane.addTab("About", aboutPanel);
 		
 		add(tabbedPane);
-		
 	}//end SearchEngine()
 	
 	// Event handler
 	public void actionPerformed(ActionEvent e) 
 	{
+		String nextLexeme = "";
+		
 		if (e.getActionCommand().equals("search")) 
 		{
 			JOptionPane.showMessageDialog( 
@@ -124,31 +140,30 @@ public class SearchEngine extends JPanel implements ActionListener{
 	  		"SEARCH!!!", 
 	  		JOptionPane.INFORMATION_MESSAGE );
 			
-			if (orBtnSelected)
+			sbStringToParse.append( txtSearchTerms.getText() );
+			
+			StringBuilder sbResults = new StringBuilder();
+			sbResults.append( "No results found. \r\n \r\n" );
+			sbResults.append( "You searched for:\r\n \r\n" );
+			
+			while ( sbStringToParse.length() > 0 ) // While there are still Search Terms in the string
 			{
-				JOptionPane.showMessageDialog( 
-				null, 
-				"...and when you clicked it, OR was selected!", 
-				"SEARCH!!!", 
-				JOptionPane.INFORMATION_MESSAGE );
-			}
-			else if (andBtnSelected)
-			{
-				JOptionPane.showMessageDialog( 
-				null, 
-				"...and when you clicked it, AND was selected!", 
-				"SEARCH!!!", 
-				JOptionPane.INFORMATION_MESSAGE );
-			}
-			else if (phraseBtnSelected)
-			{
-				JOptionPane.showMessageDialog( 
-				null, 
-				"...and when you clicked it, PHRASE was selected!", 
-				"SEARCH!!!", 
-				JOptionPane.INFORMATION_MESSAGE );
-			}
-		}
+				nextLexeme = getNextLexeme(); // Get the next Search Term (lexeme)
+				sbResults.append( nextLexeme + " " ); 
+				
+				if ( orBtnSelected && sbStringToParse.length() > 0 )
+					sbResults.append( "OR " );
+								
+				if ( andBtnSelected && sbStringToParse.length() > 0 )
+					sbResults.append( "AND " );
+								
+				if ( phraseBtnSelected && sbStringToParse.length() <= 0 )
+					sbResults.append( "(PHRASE; terms in this order) " );
+			} // While
+			
+			txtResults.setText( sbResults.toString() );
+			
+		} // If search
 		else if (e.getActionCommand().equals("or"))
 		{
 			orBtnSelected     = true;
@@ -169,9 +184,29 @@ public class SearchEngine extends JPanel implements ActionListener{
 		}
 	} // actionPerformed
 	
+	/*this is just a filler component
+	 * it should be a text box for 
+	 * the user to type into
+	 */
+	/*With the text box created, is this comment still necessary?
+	 * 
+	 */
 	
-	
-	
+	// Parses the Search Term string by returning the next lexeme
+	public String getNextLexeme()
+	{
+		int i;
+		String lexeme;
+		
+		for ( i = 0; i < sbStringToParse.length(); i++ ) // Loop to look at each character in the string
+			if ( sbStringToParse.substring(i, i + 1).equals( " " ) ) // If a space is found, marking the end of a lexeme
+				break;
+				
+		lexeme = sbStringToParse.substring(0, i); // Copy the first lexeme found in the string
+		sbStringToParse.delete( 0, i + 1);  // Remove the lexeme from the string
+
+		return lexeme;
+	} // getNextLexeme
 	
 	protected JComponent textPanel(String text){
 		JPanel panel = new JPanel(false);
@@ -190,8 +225,9 @@ public class SearchEngine extends JPanel implements ActionListener{
 		frame.add(new SearchEngine(), BorderLayout.CENTER);
 		
 		
-		frame.setSize(500,500);
-		frame.setVisible(true);
+		frame.setSize( 500, 500);
+		frame.setLocationRelativeTo( null ); // Center frame on screen
+		frame.setVisible( true );
 	}//end creatAndShowGUI()
 
 	public static void main(String[] args) {
