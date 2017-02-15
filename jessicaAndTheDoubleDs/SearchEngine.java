@@ -6,6 +6,18 @@
  */
 package jessicaAndTheDoubleDs; // Team name
 
+
+
+/*
+ * 1)get screen to not resize from user
+ * 2)fill in file tab..add buttons textfields etc
+ * 3)make sure project has the right tag for submission
+ * 
+ * part 2
+ * 
+ * 
+ * 1)figure out browse button
+ */
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
