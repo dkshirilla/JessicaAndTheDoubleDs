@@ -35,6 +35,8 @@ public class SearchEngine extends JPanel implements ActionListener{
 	// These need to be accessible outside of the SearchEngine method
 	JTextField txtSearchTerms = new JTextField( "Enter search terms here", 40 );
 	JTextArea txtResults = new JTextArea(22, 40);
+	//add text area for file tab
+	JTextArea fileAdd = new JTextArea(22,40);
 	
 	// Search Terms
 	StringBuilder sbStringToParse = new StringBuilder();
@@ -58,6 +60,8 @@ public class SearchEngine extends JPanel implements ActionListener{
 		
 		// Create buttons
 		JButton btnSearch = new JButton( "Search" );
+		//added tool tip to search button 
+		btnSearch.setToolTipText("Click to search indexed files");
 			
         /*To use absolute layout, use this code:
  		searchPanel.setLayout(null);
@@ -107,9 +111,28 @@ public class SearchEngine extends JPanel implements ActionListener{
 		searchPanel.add(txtResults);
 		
 		// Add File Upload/Update panel
-		JComponent files = textPanel("File upload/update panel");
+		//erased string that appeared in file tab
+		JComponent files = textPanel("");
 		// Add Files tab 
 		tabbedPane.addTab("Files", files);
+		
+		
+		//create buttons for file tab
+		JButton btnAddFile = new JButton("Add File");
+		JButton btnRmvFile = new JButton("Remove File");
+		JButton btnUpdateFiles = new JButton("Update files");
+		//create tool tips for buttons
+		btnAddFile.setToolTipText("Open browse window to select and add a file");
+		btnRmvFile.setToolTipText("Remove selected file");
+		btnUpdateFiles.setToolTipText("Update the files if they have been modified");
+		//add text area and buttons to file tab
+		fileAdd.setBorder(BorderFactory.createLineBorder(Color.black));
+		files.add(fileAdd);
+		files.add(btnAddFile);
+		files.add(btnRmvFile);
+		files.add(btnUpdateFiles);
+		
+		
 		
 		// Build string for About tab using HTML
 		StringBuilder sbAbout = new StringBuilder();
