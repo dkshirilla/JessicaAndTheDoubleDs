@@ -219,13 +219,6 @@ public class SearchEngine extends JPanel implements ActionListener{
 		}
 	} // actionPerformed
 	
-	/*this is just a filler component
-	 * it should be a text box for 
-	 * the user to type into
-	 */
-	/*With the text box created, is this comment still necessary?
-	 * 
-	 */
 	
 	// Parses the Search Term string by returning the next lexeme
 	public String getNextLexeme()
