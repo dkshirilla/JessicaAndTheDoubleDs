@@ -256,6 +256,7 @@ public class SearchEngine extends JPanel implements ActionListener{
 		frame.setSize( 500, 500);
 		frame.setLocationRelativeTo( null ); // Center frame on screen
 		frame.setVisible( true );
+		frame.setResizable(false); // dont let user resize window to keep gui formatting constant 
 	}//end creatAndShowGUI()
 
 	public static void main(String[] args) {
