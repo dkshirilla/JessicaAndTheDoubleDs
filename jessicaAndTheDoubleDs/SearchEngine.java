@@ -6,22 +6,9 @@
  */
 package jessicaAndTheDoubleDs; // Team name
 
-
-
-/*
- * 1)get screen to not resize from user
- * 2)fill in file tab..add buttons textfields etc
- * 3)make sure project has the right tag for submission
- * 
- * part 2
- * 
- * 
- * 1)figure out browse button
- */
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
-
 import javax.swing.*;
 
 public class SearchEngine extends JPanel implements ActionListener{	
@@ -35,12 +22,13 @@ public class SearchEngine extends JPanel implements ActionListener{
 			phraseBtnSelected = false;
 	
 	// These need to be accessible outside of the SearchEngine method
+	// Search Tab text fields
 	JTextField txtSearchTerms = new JTextField( "Enter search terms here", 40 );
 	JTextArea txtResults = new JTextArea(22, 40);
-	//add text area for file tab
+	
+	// Add text area for file tab
 	JTextArea fileAdd = new JTextArea(22,40);
-	
-	
+		
 	// Search Terms
 	StringBuilder sbStringToParse = new StringBuilder();
 	
@@ -63,24 +51,14 @@ public class SearchEngine extends JPanel implements ActionListener{
 		
 		// Create buttons
 		JButton btnSearch = new JButton( "Search" );
-		//added tool tip to search button 
 		btnSearch.setToolTipText("Click to search indexed files");
-			
-        /*To use absolute layout, use this code:
- 		searchPanel.setLayout(null);
-		btnSearch.setBounds(50, 50, 100, 100); 
-		This also kills the initial panel text,
-		but it could be put back with a label */ 
-		
-		// add a comment here
-	    btnSearch.setActionCommand( "search" ); 
+		btnSearch.setActionCommand( "search" ); 
 	    btnSearch.addActionListener( this );
 	    
-	    JRadioButton btnOr     = new JRadioButton( "OR" );
-        JRadioButton btnAnd    = new JRadioButton( "AND" );
+	    JRadioButton btnOr = new JRadioButton( "OR" );
+        JRadioButton btnAnd = new JRadioButton( "AND" );
         JRadioButton btnPhrase = new JRadioButton( "Phrase" );
-        
-	    btnOr.setActionCommand( "or" ); 
+        btnOr.setActionCommand( "or" ); 
 	    btnOr.addActionListener( this );
 	    btnAnd.setActionCommand( "and" ); 
 	    btnAnd.addActionListener( this );
@@ -93,7 +71,7 @@ public class SearchEngine extends JPanel implements ActionListener{
         group.add( btnAnd );
         group.add( btnPhrase ); 
  
-        // Add buttons to panel
+        // Add buttons to Search panel
 		searchPanel.add( btnSearch );
 		searchPanel.add( btnOr );
 		searchPanel.add( btnAnd );
@@ -115,12 +93,10 @@ public class SearchEngine extends JPanel implements ActionListener{
 		searchPanel.add(txtResults);
 		
 		// Add File Upload/Update panel
-		//erased string that appeared in file tab
 		JComponent files = textPanel("");
 		// Add Files tab 
 		tabbedPane.addTab("Files", files);
-		
-		
+				
 		//create buttons for file tab
 		JButton btnAddFile = new JButton("Add File");
 		btnAddFile.setToolTipText("Open browse window to select and add a file");
@@ -132,8 +108,8 @@ public class SearchEngine extends JPanel implements ActionListener{
 		btnRmvFile.setActionCommand("rmvFile");
 		btnRmvFile.addActionListener(this);
 		
-		JButton btnUpdateFiles = new JButton("Update files");
-		btnUpdateFiles.setToolTipText("Update the files if they have been modified");
+		JButton btnUpdateFiles = new JButton("Update Index");
+		btnUpdateFiles.setToolTipText("Update the index if they have been modified");
 		btnUpdateFiles.setActionCommand("updateFiles");
 		btnUpdateFiles.addActionListener(this);
 		
@@ -143,9 +119,7 @@ public class SearchEngine extends JPanel implements ActionListener{
 		files.add(btnAddFile);
 		files.add(btnRmvFile);
 		files.add(btnUpdateFiles);
-		
-		
-		
+			
 		// Build string for About tab using HTML
 		StringBuilder sbAbout = new StringBuilder();
 		sbAbout.append( "<html>" );
@@ -177,7 +151,8 @@ public class SearchEngine extends JPanel implements ActionListener{
 	// Event handler
 	public void actionPerformed(ActionEvent e) 
 	{
-		String nextLexeme = "";
+		String nextLexeme = "",
+			   fileName	  = "";
 		
 		if (e.getActionCommand().equals("search")) 
 		{
@@ -193,42 +168,51 @@ public class SearchEngine extends JPanel implements ActionListener{
 			sbResults.append( "No results found. \r\n \r\n" );
 			sbResults.append( "You searched for:\r\n \r\n" );
 			
-			while ( sbStringToParse.length() > 0 ) // While there are still Search Terms in the string
+			// While there are still Search Terms in the string
+			while ( sbStringToParse.length() > 0 ) 
 			{
 				nextLexeme = getNextLexeme(); // Get the next Search Term (lexeme)
 				sbResults.append( nextLexeme + " " ); 
 				
-				if ( orBtnSelected && sbStringToParse.length() > 0 )
+				// If OR and not end of search-term string
+				if ( orBtnSelected && sbStringToParse.length() > 0 ) 
 					sbResults.append( "OR " );
 								
+				// If AND and not end of search-term string
 				if ( andBtnSelected && sbStringToParse.length() > 0 )
 					sbResults.append( "AND " );
 								
+				// If PHRASE and end of search-term string
 				if ( phraseBtnSelected && sbStringToParse.length() <= 0 )
 					sbResults.append( "(PHRASE; terms in this order) " );
 			} // While
 			
+			// Write string to results text area
 			txtResults.setText( sbResults.toString() );
 			
 		} // If search
+		
 		else if (e.getActionCommand().equals("or"))
 		{
 			orBtnSelected     = true;
 			andBtnSelected    = false;
 			phraseBtnSelected = false;
-		}
+		} // If OR
+		
 		else if (e.getActionCommand().equals("and"))
 		{
 			orBtnSelected     = false;
 			andBtnSelected    = true;
 			phraseBtnSelected = false;
-		}
+		} // If AND
+		
 		else if (e.getActionCommand().equals("phrase"))
 		{
 			orBtnSelected     = false;
 			andBtnSelected    = false;
 			phraseBtnSelected = true;
-		}
+		} // If PHRASE
+		
 		else if (e.getActionCommand().equals("addFile"))
 		{
 			JOptionPane.showMessageDialog(null,"You clicked the add file button!", "ADDDDD!!!",
@@ -238,39 +222,56 @@ public class SearchEngine extends JPanel implements ActionListener{
 			JFileChooser chooser = new JFileChooser();
 			chooser.showOpenDialog(null);
 			File f = chooser.getSelectedFile();
-			String filename = f.getAbsolutePath();
-			fileAdd.setText(filename);
 			
-		}
+			if (f != null)
+				fileName = f.getAbsolutePath();
+			else // Handle possibility of null (no file selected), which would cause exception
+				JOptionPane.showMessageDialog( 
+						null, 
+						"You didn't select a file", 
+						"NO FILE SELECTED!!!", 
+						JOptionPane.WARNING_MESSAGE );
+			
+			// Write file path name to text area
+			fileAdd.setText(fileName);
+		} // If Add File
+		
 		else if (e.getActionCommand().equals("rmvFile"))
 		{
 			JOptionPane.showMessageDialog(null,"You clicked the remove file button!", "REMOVE!!",
 					JOptionPane.INFORMATION_MESSAGE);
-		}
+		} // If Remove File
+		
 		else if (e.getActionCommand().equals("updateFiles"))
 		{
-			JOptionPane.showMessageDialog(null,"You clicked the update files button!", "UPDATE!!",
+			JOptionPane.showMessageDialog(null,"You clicked the update index button!", "UPDATE!!",
 					JOptionPane.INFORMATION_MESSAGE);
-		}
+		} // If Update Index
 	} // actionPerformed
 	
 	
 	// Parses the Search Term string by returning the next lexeme
 	public String getNextLexeme()
 	{
-		int i;
+		int i; // i needs to be in-scope outside of for loop
 		String lexeme;
 		
-		for ( i = 0; i < sbStringToParse.length(); i++ ) // Loop to look at each character in the string
-			if ( sbStringToParse.substring(i, i + 1).equals( " " ) ) // If a space is found, marking the end of a lexeme
-				break;
-				
-		lexeme = sbStringToParse.substring(0, i); // Copy the first lexeme found in the string
-		sbStringToParse.delete( 0, i + 1);  // Remove the lexeme from the string
+		// Loop to look at each character in the string
+		for ( i = 0; i < sbStringToParse.length(); i++ ) 
+			// If a space is found, marking the end of a lexeme...
+			if ( sbStringToParse.substring(i, i + 1).equals( " " ) ) 
+				break; // Break out of the loop
+		
+		// Copy the first lexeme found in the string
+		lexeme = sbStringToParse.substring(0, i);
+		
+		// Remove the lexeme from the string
+		sbStringToParse.delete( 0, i + 1);  
 
 		return lexeme;
 	} // getNextLexeme
 	
+	// Creates a panel with label containing specified text
 	protected JComponent textPanel(String text){
 		JPanel panel = new JPanel(false);
 		JLabel filler = new JLabel(text);
@@ -286,7 +287,6 @@ public class SearchEngine extends JPanel implements ActionListener{
 		
 		//add tabbed pane to main container
 		frame.add(new SearchEngine(), BorderLayout.CENTER);
-		
 		
 		frame.setSize( 500, 500);
 		frame.setLocationRelativeTo( null ); // Center frame on screen
