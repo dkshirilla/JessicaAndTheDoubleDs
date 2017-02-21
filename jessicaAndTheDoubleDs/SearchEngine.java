@@ -20,6 +20,8 @@ package jessicaAndTheDoubleDs; // Team name
  */
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+
 import javax.swing.*;
 
 public class SearchEngine extends JPanel implements ActionListener{	
@@ -37,6 +39,7 @@ public class SearchEngine extends JPanel implements ActionListener{
 	JTextArea txtResults = new JTextArea(22, 40);
 	//add text area for file tab
 	JTextArea fileAdd = new JTextArea(22,40);
+	
 	
 	// Search Terms
 	StringBuilder sbStringToParse = new StringBuilder();
@@ -105,6 +108,7 @@ public class SearchEngine extends JPanel implements ActionListener{
 		// Set line wrapping
 		txtResults.setLineWrap(true);
 		txtResults.setWrapStyleWord(true);
+		fileAdd.setLineWrap(true);
 		// Add border to Results box
 		txtResults.setBorder(BorderFactory.createLineBorder(Color.black));
 		// Add Results box to panel
@@ -119,12 +123,20 @@ public class SearchEngine extends JPanel implements ActionListener{
 		
 		//create buttons for file tab
 		JButton btnAddFile = new JButton("Add File");
-		JButton btnRmvFile = new JButton("Remove File");
-		JButton btnUpdateFiles = new JButton("Update files");
-		//create tool tips for buttons
 		btnAddFile.setToolTipText("Open browse window to select and add a file");
+		btnAddFile.setActionCommand("addFile");
+		btnAddFile.addActionListener(this);
+		
+		JButton btnRmvFile = new JButton("Remove File");
 		btnRmvFile.setToolTipText("Remove selected file");
+		btnRmvFile.setActionCommand("rmvFile");
+		btnRmvFile.addActionListener(this);
+		
+		JButton btnUpdateFiles = new JButton("Update files");
 		btnUpdateFiles.setToolTipText("Update the files if they have been modified");
+		btnUpdateFiles.setActionCommand("updateFiles");
+		btnUpdateFiles.addActionListener(this);
+		
 		//add text area and buttons to file tab
 		fileAdd.setBorder(BorderFactory.createLineBorder(Color.black));
 		files.add(fileAdd);
@@ -216,6 +228,29 @@ public class SearchEngine extends JPanel implements ActionListener{
 			orBtnSelected     = false;
 			andBtnSelected    = false;
 			phraseBtnSelected = true;
+		}
+		else if (e.getActionCommand().equals("addFile"))
+		{
+			JOptionPane.showMessageDialog(null,"You clicked the add file button!", "ADDDDD!!!",
+					JOptionPane.INFORMATION_MESSAGE);
+			
+			//prototype of windows explorer to add file directories using JFileChooser
+			JFileChooser chooser = new JFileChooser();
+			chooser.showOpenDialog(null);
+			File f = chooser.getSelectedFile();
+			String filename = f.getAbsolutePath();
+			fileAdd.setText(filename);
+			
+		}
+		else if (e.getActionCommand().equals("rmvFile"))
+		{
+			JOptionPane.showMessageDialog(null,"You clicked the remove file button!", "REMOVE!!",
+					JOptionPane.INFORMATION_MESSAGE);
+		}
+		else if (e.getActionCommand().equals("updateFiles"))
+		{
+			JOptionPane.showMessageDialog(null,"You clicked the update files button!", "UPDATE!!",
+					JOptionPane.INFORMATION_MESSAGE);
 		}
 	} // actionPerformed
 	
