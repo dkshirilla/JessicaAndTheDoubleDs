@@ -215,8 +215,6 @@ public class SearchEngine extends JPanel implements ActionListener{
 		
 		else if (e.getActionCommand().equals("addFile"))
 		{
-			JOptionPane.showMessageDialog(null,"You clicked the add file button!", "ADDDDD!!!",
-					JOptionPane.INFORMATION_MESSAGE);
 			
 			//prototype of windows explorer to add file directories using JFileChooser
 			JFileChooser chooser = new JFileChooser();
