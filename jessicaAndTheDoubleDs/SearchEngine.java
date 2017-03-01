@@ -146,6 +146,36 @@ public class SearchEngine extends JPanel implements ActionListener{
 		tabbedPane.addTab("About", aboutPanel);
 		
 		add(tabbedPane);
+		
+/* Find out if index file exists.  
+ * If it does exist, then read it:
+ * 		Read number of indexed files
+ * 		Loop to read file names & timestamps in index file
+ *      	Do previously indexed files still exist?
+ *      		If not, set status to "no longer exists"
+ *      	If so, read timestamps and compare to indexed timestamps
+ *      		If timestamps agree, then set status to "indexed"
+ *      		If timestamps disagree, set status to "file changed"
+ *      If there is at least one file name in the index file, read the (to be indexed later) words into the data structure 
+ *       * 				
+ */
+		
+/* Suggested index file format:
+ * 2                  // Number of indexed files (0 if none)... these comments will not be in the file!
+ * c:\data.txt        // First file pathname 
+ * c:\data2.txt       // Second file pathname
+ * These              // Indexed words to EOF...
+ * are 
+ * words
+ * that
+ * were 
+ * in
+ * the
+ * files
+ * EOF
+ */
+		
+		
 	}//end SearchEngine()
 	
 	// Event handler
