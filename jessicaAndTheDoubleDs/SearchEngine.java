@@ -156,14 +156,17 @@ public class SearchEngine extends JPanel implements ActionListener{
  *      	If so, read timestamps and compare to indexed timestamps
  *      		If timestamps agree, then set status to "indexed"
  *      		If timestamps disagree, set status to "file changed"
- *      If there is at least one file name in the index file, read the (to be indexed later) words into the data structure 
- *       * 				
+ *      If there is at least one file name in the index file, read the 
+ *      (to be indexed later) words into the data structure 
+ * If index file does not exist, create it.       				
  */
 		
 /* Suggested index file format:
  * 2                  // Number of indexed files (0 if none)... these comments will not be in the file!
- * c:\data.txt        // First file pathname 
+ * c:\data.txt        // First file pathname
+ * (timestamp in integer form) 
  * c:\data2.txt       // Second file pathname
+ * (timestamp in integer form)
  * These              // Indexed words to EOF...
  * are 
  * words
@@ -173,6 +176,13 @@ public class SearchEngine extends JPanel implements ActionListener{
  * the
  * files
  * EOF
+ */
+		
+/* Suggested methods we need:
+ * writeIndex
+ * readIndex
+ * getCurrentTimestamp (may be canned one)
+ * fileExists (may be canned one)
  */
 		
 		
@@ -262,18 +272,47 @@ public class SearchEngine extends JPanel implements ActionListener{
 			
 			// Write file path name to text area
 			fileAdd.setText(fileName);
+/* This needs to be able to add multiple files to text are, an dnot overwrite th eones that are already listed
+ * When a file is added, it has to be indexed:
+ * 		Increment number of files in index file
+ * 		Add file pathname to index file
+ * 		Parse the added file into words (can use getNextLexeme()) 
+ * 		Add words to data structure and write the whole mess (number of files, file pathnam,es, and all words) 
+ *      to the index			
+ */
+			
+			
 		} // If Add File
 		
 		else if (e.getActionCommand().equals("rmvFile"))
 		{
 			JOptionPane.showMessageDialog(null,"You clicked the remove file button!", "REMOVE!!",
 					JOptionPane.INFORMATION_MESSAGE);
+			
+/* Need a way to select the file to be removed
+ * Decrement number of files in index 
+ * Remove file pathname from list of file pathnames
+ * Eventually, the indexed words pertaining to this file will have to removed from the 
+ * data structure (or at least not written back to disk), but this is probably too much 
+ * for Part II of the project
+ * Rewrite the index			
+ */
 		} // If Remove File
 		
 		else if (e.getActionCommand().equals("updateFiles"))
 		{
 			JOptionPane.showMessageDialog(null,"You clicked the update index button!", "UPDATE!!",
 					JOptionPane.INFORMATION_MESSAGE);
+			
+/* For each file in index...
+ * 		Get the file timestamp from the file to be indexed 
+ * 		Parse the file into words (can use getNextLexeme()) 
+ *      Update data structure 
+ *      If file does not exist, remove it an dits words from index
+ * Rewrite the index
+ * Update each file status display to "indexed" 			
+*/
+			
 		} // If Update Index
 	} // actionPerformed
 	
