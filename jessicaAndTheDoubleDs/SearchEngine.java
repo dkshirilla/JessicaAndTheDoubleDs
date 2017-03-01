@@ -8,7 +8,7 @@ package jessicaAndTheDoubleDs; // Team name
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
+import java.io.*;
 import javax.swing.*;
 
 public class SearchEngine extends JPanel implements ActionListener{	
@@ -31,6 +31,9 @@ public class SearchEngine extends JPanel implements ActionListener{
 		
 	// Search Terms
 	StringBuilder sbStringToParse = new StringBuilder();
+	
+	// Index file
+	Writer file;
 	
 	public SearchEngine(){
 		//used to set tabs to top left
@@ -337,6 +340,34 @@ public class SearchEngine extends JPanel implements ActionListener{
 
 		return lexeme;
 	} // getNextLexeme
+	
+	// Write the Index file
+	public void writeIndexFile()
+	{
+		try ( Writer file = new BufferedWriter( new OutputStreamWriter(
+				new FileOutputStream("filename.txt"), "utf-8" ) ) ) 
+		{
+			file.write("test");
+			file.write("\r\n");
+			file.write("test2");
+			file.append("appended");
+	   	} // try
+		catch (IOException ex) 
+		{
+		  // report the exception?
+		} // catch
+		finally 
+		{
+			try 
+			{
+				file.close();
+			} // try 
+			catch (Exception ex) 
+			{
+			   // report the exception?
+			} // catch
+		} // finally
+	} // writeIndexFile
 	
 	// Creates a panel with label containing specified text
 	protected JComponent textPanel(String text){
