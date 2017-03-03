@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
+import java.util.*;
 
 public class SearchEngine extends JPanel implements ActionListener{	
 	
@@ -33,7 +34,8 @@ public class SearchEngine extends JPanel implements ActionListener{
 	StringBuilder sbStringToParse = new StringBuilder();
 	
 	// Index file
-	Writer file;
+	File indexFile;
+	int numFiles;
 	
 	public SearchEngine(){
 		//used to set tabs to top left
@@ -149,6 +151,25 @@ public class SearchEngine extends JPanel implements ActionListener{
 		tabbedPane.addTab("About", aboutPanel);
 		
 		add(tabbedPane);
+		
+		indexFile = new File( "index.txt" ); 
+		
+	//	writeIndexFile();
+		
+		if ( indexFile.exists() )
+		{
+			numFiles = readIndexFile();
+			JOptionPane.showMessageDialog( 
+			  		null, 
+			  		("numFiles = " + Integer.toString( numFiles )), 
+			  		"SEARCH!!!", 
+			  		JOptionPane.INFORMATION_MESSAGE );
+		}
+		else
+		{
+			numFiles = 0;
+			writeIndexFile(numFiles);
+		}
 		
 /* Find out if index file exists.  
  * If it does exist, then read it:
@@ -342,31 +363,40 @@ public class SearchEngine extends JPanel implements ActionListener{
 	} // getNextLexeme
 	
 	// Write the Index file
-	public void writeIndexFile()
+	public void writeIndexFile(int numFiles)
 	{
-		try ( Writer file = new BufferedWriter( new OutputStreamWriter(
-				new FileOutputStream("filename.txt"), "utf-8" ) ) ) 
+		PrintWriter outputFile;
+		try 
 		{
-			file.write("test");
-			file.write("\r\n");
-			file.write("test2");
-			file.append("appended");
-	   	} // try
-		catch (IOException ex) 
+			outputFile = new PrintWriter(indexFile);
+			outputFile.println(numFiles);
+	//		outputFile.println("test9");
+	//		outputFile.append("appended");
+	   	
+			outputFile.close();
+		} 
+		catch (FileNotFoundException e) 
 		{
-		  // report the exception?
-		} // catch
-		finally 
+			e.printStackTrace();
+		}
+	} // writeIndexFile
+	
+	public int readIndexFile()
+	{
+		Scanner inputFile;
+		try 
 		{
-			try 
-			{
-				file.close();
-			} // try 
-			catch (Exception ex) 
-			{
-			   // report the exception?
-			} // catch
-		} // finally
+			inputFile = new Scanner(indexFile);
+			numFiles = inputFile.nextInt();
+			
+			inputFile.close();
+			
+		} 
+		catch (FileNotFoundException e) 
+		{
+			e.printStackTrace();
+		}
+		return numFiles;
 	} // writeIndexFile
 	
 	// Creates a panel with label containing specified text
