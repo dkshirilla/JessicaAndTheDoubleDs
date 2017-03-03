@@ -160,11 +160,25 @@ public class SearchEngine extends JPanel implements ActionListener{
 		if ( indexFile.exists() )
 		{
 			//numFiles = readIndexFile();
+			//numFiles = 0;
+			//writeIndexFile(numFiles);
 			JOptionPane.showMessageDialog( 
 			  		null, 
 			  		("numFiles = " + Integer.toString( numFiles )), 
 			  		"SEARCH!!!", 
 			  		JOptionPane.INFORMATION_MESSAGE );
+			BufferedReader buffReader = null;
+			try{
+				FileReader fileReader = new FileReader(indexFile);
+				buffReader = new BufferedReader(fileReader);
+				buffReader.readLine();
+				fileAdd.setText("");
+				fileAdd.read(buffReader, "index.txt");
+			}
+			catch(Exception mistake)
+			{
+				mistake.printStackTrace();
+			}
 		}
 		else
 		{
@@ -281,7 +295,7 @@ public class SearchEngine extends JPanel implements ActionListener{
 		else if (e.getActionCommand().equals("addFile"))
 		{
 			
-			//prototype of windows explorer to add file directories using JFileChooser
+		
 			JFileChooser chooser = new JFileChooser();
 			chooser.showOpenDialog(null);
 			File f = chooser.getSelectedFile();
@@ -296,10 +310,11 @@ public class SearchEngine extends JPanel implements ActionListener{
 						JOptionPane.WARNING_MESSAGE );
 			
 			// Write file path name to text area
-			fileAdd.setText(fileName);
+			fileAdd.append(fileName + "\n");
 			//get text from text area
 			String filePath = fileAdd.getText();
 			writeFilePath(filePath, f, numFiles);
+			
 		
 			
 			
@@ -370,7 +385,26 @@ public class SearchEngine extends JPanel implements ActionListener{
 		return lexeme;
 	} // getNextLexeme
 	
-	// Write the Index file
+	// Read the index file
+	
+	
+	
+	//write number of index files to index file
+	public void writeNumFiles(int numFiles)
+	{
+		PrintWriter outputNum;
+		try
+		{
+			outputNum = new PrintWriter(indexFile);
+			outputNum.println(numFiles);
+			outputNum.close();
+		}
+		catch(FileNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
 	
 	//Write file path to index file with time stamp of last modified
 	public void writeFilePath(String filePath, File f, int numFiles)
@@ -388,6 +422,7 @@ public class SearchEngine extends JPanel implements ActionListener{
 			e.printStackTrace();
 		}
 	}
+	//Write the Index file
 	public void writeIndexFile(int numFiles)
 	{
 		PrintWriter outputFile;
