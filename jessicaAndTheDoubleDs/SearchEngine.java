@@ -154,11 +154,12 @@ public class SearchEngine extends JPanel implements ActionListener{
 		
 		indexFile = new File( "index.txt" ); 
 		
+		
 	//	writeIndexFile();
 		
 		if ( indexFile.exists() )
 		{
-			numFiles = readIndexFile();
+			//numFiles = readIndexFile();
 			JOptionPane.showMessageDialog( 
 			  		null, 
 			  		("numFiles = " + Integer.toString( numFiles )), 
@@ -296,6 +297,13 @@ public class SearchEngine extends JPanel implements ActionListener{
 			
 			// Write file path name to text area
 			fileAdd.setText(fileName);
+			//get text from text area
+			String filePath = fileAdd.getText();
+			writeFilePath(filePath, f, numFiles);
+		
+			
+			
+			
 /* This needs to be able to add multiple files to text are, an dnot overwrite th eones that are already listed
  * When a file is added, it has to be indexed:
  * 		Increment number of files in index file
@@ -363,6 +371,23 @@ public class SearchEngine extends JPanel implements ActionListener{
 	} // getNextLexeme
 	
 	// Write the Index file
+	
+	//Write file path to index file with time stamp of last modified
+	public void writeFilePath(String filePath, File f, int numFiles)
+	{
+		PrintWriter outputFilePath;
+		try
+		{
+			outputFilePath = new PrintWriter(indexFile);
+			outputFilePath.println(numFiles);
+			outputFilePath.println(filePath + " " + f.lastModified());
+			outputFilePath.close();
+		}
+		catch(FileNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+	}
 	public void writeIndexFile(int numFiles)
 	{
 		PrintWriter outputFile;
