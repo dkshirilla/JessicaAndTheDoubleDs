@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
+import javax.swing.table.*;
 import java.util.*;
 
 public class SearchEngine extends JPanel implements ActionListener{	
@@ -27,8 +28,25 @@ public class SearchEngine extends JPanel implements ActionListener{
 	JTextField txtSearchTerms = new JTextField( "Enter search terms here", 40 );
 	JTextArea txtResults = new JTextArea(22, 40);
 	
+	
+	
+	public static JScrollPane table(){
+	String[] columnNames = {"File","Index"};
+	String[][] data = {{"", ""}};
+	JTable table = new JTable(data,columnNames);
+	DefaultTableModel model = new DefaultTableModel(data,columnNames);
+	model.setColumnIdentifiers(columnNames);
+	table.setPreferredScrollableViewportSize(new Dimension(500,300));
+	table.setFillsViewportHeight(true);
+	JScrollPane jps = new JScrollPane(table);
+	return jps;
+	
+	}
+	
 	// Add text area for file tab
 	JTextArea fileAdd = new JTextArea(22,40);
+	
+	
 		
 	// Search Terms
 	StringBuilder sbStringToParse = new StringBuilder();
@@ -101,6 +119,7 @@ public class SearchEngine extends JPanel implements ActionListener{
 		JComponent files = textPanel("");
 		// Add Files tab 
 		tabbedPane.addTab("Files", files);
+		
 				
 		//create buttons for file tab
 		JButton btnAddFile = new JButton("Add File");
@@ -120,7 +139,8 @@ public class SearchEngine extends JPanel implements ActionListener{
 		
 		//add text area and buttons to file tab
 		fileAdd.setBorder(BorderFactory.createLineBorder(Color.black));
-		files.add(fileAdd);
+		//files.add(fileAdd);
+		files.add(table());
 		files.add(btnAddFile);
 		files.add(btnRmvFile);
 		files.add(btnUpdateFiles);
@@ -172,7 +192,6 @@ public class SearchEngine extends JPanel implements ActionListener{
 				FileReader fileReader = new FileReader(indexFile);
 				buffReader = new BufferedReader(fileReader);
 				buffReader.readLine();
-				fileAdd.setText("");
 				fileAdd.read(buffReader, "index.txt");
 			}
 			catch(Exception mistake)
