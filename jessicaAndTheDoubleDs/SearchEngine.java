@@ -44,7 +44,7 @@ public class SearchEngine extends JPanel implements ActionListener{
 	}
 	
 	// Add text area for file tab
-	JTextArea fileAdd = new JTextArea(22,40);
+	//JTextArea fileAdd = new JTextArea(22,40);
 	
 	
 		
@@ -109,7 +109,7 @@ public class SearchEngine extends JPanel implements ActionListener{
 		// Set line wrapping
 		txtResults.setLineWrap(true);
 		txtResults.setWrapStyleWord(true);
-		fileAdd.setLineWrap(true);
+		//fileAdd.setLineWrap(true);
 		// Add border to Results box
 		txtResults.setBorder(BorderFactory.createLineBorder(Color.black));
 		// Add Results box to panel
@@ -138,7 +138,7 @@ public class SearchEngine extends JPanel implements ActionListener{
 		btnUpdateFiles.addActionListener(this);
 		
 		//add text area and buttons to file tab
-		fileAdd.setBorder(BorderFactory.createLineBorder(Color.black));
+		//fileAdd.setBorder(BorderFactory.createLineBorder(Color.black));
 		//files.add(fileAdd);
 		files.add(table());
 		files.add(btnAddFile);
@@ -192,7 +192,7 @@ public class SearchEngine extends JPanel implements ActionListener{
 				FileReader fileReader = new FileReader(indexFile);
 				buffReader = new BufferedReader(fileReader);
 				buffReader.readLine();
-				fileAdd.read(buffReader, "index.txt");
+				//fileAdd.read(buffReader, "index.txt");
 			}
 			catch(Exception mistake)
 			{
@@ -329,10 +329,10 @@ public class SearchEngine extends JPanel implements ActionListener{
 						JOptionPane.WARNING_MESSAGE );
 			
 			// Write file path name to text area
-			fileAdd.append(fileName + "\n");
+			//fileAdd.append(fileName + "\n");
 			//get text from text area
-			String filePath = fileAdd.getText();
-			writeFilePath(filePath, f, numFiles);
+			//String filePath = fileAdd.getText();
+			//writeFilePath(filePath, f, numFiles);
 			
 		
 			
