@@ -7,6 +7,7 @@
 package jessicaAndTheDoubleDs; // Team name
 
 import java.awt.*;
+import java.awt.List;
 import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
@@ -29,19 +30,20 @@ public class SearchEngine extends JPanel implements ActionListener{
 	JTextArea txtResults = new JTextArea(22, 40);
 	
 	
-	
-	public static JScrollPane table(){
+	//create jtable for files tab
+	/*public static JScrollPane table(){
 	String[] columnNames = {"File","Index"};
-	String[][] data = {{"", ""}};
+	String[][] data = {{null,null}};
+	DefaultTableModel model = new DefaultTableModel();
 	JTable table = new JTable(data,columnNames);
-	DefaultTableModel model = new DefaultTableModel(data,columnNames);
+	table.setModel(model);
 	model.setColumnIdentifiers(columnNames);
 	table.setPreferredScrollableViewportSize(new Dimension(500,300));
 	table.setFillsViewportHeight(true);
 	JScrollPane jps = new JScrollPane(table);
 	return jps;
 	
-	}
+	}*/
 	
 	// Add text area for file tab
 	//JTextArea fileAdd = new JTextArea(22,40);
@@ -71,6 +73,17 @@ public class SearchEngine extends JPanel implements ActionListener{
 		txtSearchTerms.setBorder(BorderFactory.createLineBorder(Color.black));
 		// Add Search Terms text box to panel
 		searchPanel.add(txtSearchTerms);
+		
+		String[] columnNames = {"File","Index"};
+		String[][] data = {{null,null}};
+		DefaultTableModel model = new DefaultTableModel();
+		JTable table = new JTable(data,columnNames);
+		table.setModel(model);
+		table.setPreferredScrollableViewportSize(new Dimension(500,300));
+		table.setFillsViewportHeight(true);
+		model.setColumnIdentifiers(columnNames);
+		JScrollPane jps = new JScrollPane(table);
+		
 		
 		// Create buttons
 		JButton btnSearch = new JButton( "Search" );
@@ -140,7 +153,9 @@ public class SearchEngine extends JPanel implements ActionListener{
 		//add text area and buttons to file tab
 		//fileAdd.setBorder(BorderFactory.createLineBorder(Color.black));
 		//files.add(fileAdd);
-		files.add(table());
+		//files.add(table());
+		files.add(jps);
+	
 		files.add(btnAddFile);
 		files.add(btnRmvFile);
 		files.add(btnUpdateFiles);
@@ -330,6 +345,7 @@ public class SearchEngine extends JPanel implements ActionListener{
 			
 			// Write file path name to text area
 			//fileAdd.append(fileName + "\n");
+			
 			//get text from text area
 			//String filePath = fileAdd.getText();
 			//writeFilePath(filePath, f, numFiles);
