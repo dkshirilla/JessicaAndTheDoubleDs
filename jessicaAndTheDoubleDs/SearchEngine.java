@@ -7,11 +7,12 @@
 package jessicaAndTheDoubleDs; // Team name
 
 import java.awt.*;
-import java.awt.List;
 import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
 import javax.swing.table.*;
+import javax.swing.text.JTextComponent;
+
 import java.util.*;
 
 public class SearchEngine extends JPanel implements ActionListener{	
@@ -32,7 +33,7 @@ public class SearchEngine extends JPanel implements ActionListener{
 	//for jtable
 	String[] columnNames = {"File","Index"};
 	DefaultTableModel model = new DefaultTableModel();
-	
+	Object[] row = new Object[2];
 	// Search Terms
 	StringBuilder sbStringToParse = new StringBuilder();
 	
@@ -59,7 +60,6 @@ public class SearchEngine extends JPanel implements ActionListener{
 		
 		
 		//Create JTable for files tab
-		//JTable table = new JTable(data,columnNames);
 		JTable table = new JTable();
 		model.setColumnIdentifiers(columnNames);
 		table.setModel(model);
@@ -105,7 +105,6 @@ public class SearchEngine extends JPanel implements ActionListener{
 		// Set line wrapping
 		txtResults.setLineWrap(true);
 		txtResults.setWrapStyleWord(true);
-		//fileAdd.setLineWrap(true);
 		// Add border to Results box
 		txtResults.setBorder(BorderFactory.createLineBorder(Color.black));
 		// Add Results box to panel
@@ -132,13 +131,10 @@ public class SearchEngine extends JPanel implements ActionListener{
 		btnUpdateFiles.setToolTipText("Update the index if they have been modified");
 		btnUpdateFiles.setActionCommand("updateFiles");
 		btnUpdateFiles.addActionListener(this);
-		
-		//add text area and buttons to file tab
-		//fileAdd.setBorder(BorderFactory.createLineBorder(Color.black));
-		//files.add(fileAdd);
-		
-		files.add(jps);
 	
+		//add jtable to file tab
+		files.add(jps);
+		//add buttons to file tab
 		files.add(btnAddFile);
 		files.add(btnRmvFile);
 		files.add(btnUpdateFiles);
@@ -187,10 +183,19 @@ public class SearchEngine extends JPanel implements ActionListener{
 			  		JOptionPane.INFORMATION_MESSAGE );
 			BufferedReader buffReader = null;
 			try{
-				FileReader fileReader = new FileReader(indexFile);
-				buffReader = new BufferedReader(fileReader);
-				buffReader.readLine();
-				//fileAdd.read(buffReader, "index.txt");
+				Scanner in = new Scanner(new BufferedReader(new FileReader(indexFile)));
+				//FileReader fileReader = new FileReader(indexFile);
+				//buffReader = new BufferedReader(fileReader);
+				//buffReader.readLine();
+				while(in.hasNext()){
+				//String fileResult = buffReader.readLine();
+				in.nextLine();
+				String fileResult = in.nextLine();
+				//jps.read(buffReader, "index.txt");
+				row[0] = fileResult;
+				row[1] = "Indexed";
+				model.addRow(row);
+				}
 			}
 			catch(Exception mistake)
 			{
@@ -325,14 +330,13 @@ public class SearchEngine extends JPanel implements ActionListener{
 						"You didn't select a file", 
 						"NO FILE SELECTED!!!", 
 						JOptionPane.WARNING_MESSAGE );
-			Object[] row = new Object[2];
+			//add file to jtable in file tab
+
 			row[0] = fileName;
 			row[1] = "indexed";
 			model.addRow(row);
 			
-			//get text from text area
-			//String filePath = fileAdd.getText();
-			//writeFilePath(filePath, f, numFiles);
+			writeFilePath(fileName, f, numFiles);
 			
 		
 			
@@ -374,7 +378,7 @@ public class SearchEngine extends JPanel implements ActionListener{
  * 		Get the file timestamp from the file to be indexed 
  * 		Parse the file into words (can use getNextLexeme()) 
  *      Update data structure 
- *      If file does not exist, remove it an dits words from index
+ *      If file does not exist, remove it and its words from index
  * Rewrite the index
  * Update each file status display to "indexed" 			
 */
@@ -426,14 +430,14 @@ public class SearchEngine extends JPanel implements ActionListener{
 	
 	
 	//Write file path to index file with time stamp of last modified
-	public void writeFilePath(String filePath, File f, int numFiles)
+	public void writeFilePath(String fileName, File f, int numFiles)
 	{
 		PrintWriter outputFilePath;
 		try
 		{
 			outputFilePath = new PrintWriter(indexFile);
 			outputFilePath.println(numFiles);
-			outputFilePath.println(filePath + " " + f.lastModified());
+			outputFilePath.println(fileName + " " + f.lastModified());
 			outputFilePath.close();
 		}
 		catch(FileNotFoundException e)
@@ -476,7 +480,7 @@ public class SearchEngine extends JPanel implements ActionListener{
 			e.printStackTrace();
 		}
 		return numFiles;
-	} // writeIndexFile
+	} 
 	
 	// Creates a panel with label containing specified text
 	protected JComponent textPanel(String text){
