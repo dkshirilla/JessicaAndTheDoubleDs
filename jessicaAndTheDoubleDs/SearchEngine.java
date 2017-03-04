@@ -174,7 +174,7 @@ public class SearchEngine extends JPanel implements ActionListener{
 		
 		if ( indexFile.exists() )
 		{
-			//numFiles = readIndexFile();
+			numFiles = readIndexFile();
 			//numFiles = 0;
 			//writeIndexFile(numFiles);
 			JOptionPane.showMessageDialog( 
@@ -182,21 +182,20 @@ public class SearchEngine extends JPanel implements ActionListener{
 			  		("numFiles = " + Integer.toString( numFiles )), 
 			  		"SEARCH!!!", 
 			  		JOptionPane.INFORMATION_MESSAGE );
-			BufferedReader buffReader = null;
 			
+			
+			//populate jtable in files tab
 			try{
 				Scanner in = new Scanner(new BufferedReader(new FileReader(indexFile)));
-				FileReader fileReader = new FileReader(indexFile);
-				buffReader = new BufferedReader(fileReader);
-				String fileResult = buffReader.readLine();
-				in.nextLine();
-				while(in != null){
-				fileResult = in.next();
-				lastMod = in.nextLong();
-				Date date = new Date(lastMod);
-				row[0] = fileResult;
-				row[1] = date;
-				model.addRow(row);
+				String fileResult; 
+				in.next();
+				while(in.hasNext() == true){
+					fileResult = in.next();
+					lastMod = in.nextLong();
+					Date date = new Date(lastMod);
+					row[0] = fileResult;
+					row[1] = date;
+					model.addRow(row);
 				}
 				in.close();
 				}
@@ -347,7 +346,7 @@ public class SearchEngine extends JPanel implements ActionListener{
 			
 			
 			
-/* This needs to be able to add multiple files to text are, an dnot overwrite th eones that are already listed
+/* This needs to be able to add multiple files to text are, an dont overwrite the ones that are already listed
  * When a file is added, it has to be indexed:
  * 		Increment number of files in index file
  * 		Add file pathname to index file
@@ -456,6 +455,7 @@ public class SearchEngine extends JPanel implements ActionListener{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		numFiles++;
 	}
 	
 	
@@ -477,25 +477,6 @@ public class SearchEngine extends JPanel implements ActionListener{
 			e.printStackTrace();
 		}
 	} // writeIndexFile
-	
-	/*
-	public long readLastMod(){
-		Scanner inputFile;
-		try
-		{
-			inputFile = new Scanner(indexFile);
-			inputFile.next();
-			inputFile.next();
-			lastMod = inputFile.nextLong();
-			inputFile.close();
-		}
-		catch(FileNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		return lastMod;
-	}
-	*/
 	
 	
 	public int readIndexFile()
