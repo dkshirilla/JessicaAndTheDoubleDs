@@ -29,27 +29,10 @@ public class SearchEngine extends JPanel implements ActionListener{
 	JTextField txtSearchTerms = new JTextField( "Enter search terms here", 40 );
 	JTextArea txtResults = new JTextArea(22, 40);
 	
-	
-	//create jtable for files tab
-	/*public static JScrollPane table(){
+	//for jtable
 	String[] columnNames = {"File","Index"};
-	String[][] data = {{null,null}};
 	DefaultTableModel model = new DefaultTableModel();
-	JTable table = new JTable(data,columnNames);
-	table.setModel(model);
-	model.setColumnIdentifiers(columnNames);
-	table.setPreferredScrollableViewportSize(new Dimension(500,300));
-	table.setFillsViewportHeight(true);
-	JScrollPane jps = new JScrollPane(table);
-	return jps;
 	
-	}*/
-	
-	// Add text area for file tab
-	//JTextArea fileAdd = new JTextArea(22,40);
-	
-	
-		
 	// Search Terms
 	StringBuilder sbStringToParse = new StringBuilder();
 	
@@ -74,15 +57,15 @@ public class SearchEngine extends JPanel implements ActionListener{
 		// Add Search Terms text box to panel
 		searchPanel.add(txtSearchTerms);
 		
-		String[] columnNames = {"File","Index"};
-		String[][] data = {{null,null}};
-		DefaultTableModel model = new DefaultTableModel();
-		JTable table = new JTable(data,columnNames);
+		
+		//Create JTable for files tab
+		//JTable table = new JTable(data,columnNames);
+		JTable table = new JTable();
+		model.setColumnIdentifiers(columnNames);
 		table.setModel(model);
 		table.setPreferredScrollableViewportSize(new Dimension(500,300));
-		table.setFillsViewportHeight(true);
-		model.setColumnIdentifiers(columnNames);
 		JScrollPane jps = new JScrollPane(table);
+		table.setFillsViewportHeight(true);
 		
 		
 		// Create buttons
@@ -153,7 +136,7 @@ public class SearchEngine extends JPanel implements ActionListener{
 		//add text area and buttons to file tab
 		//fileAdd.setBorder(BorderFactory.createLineBorder(Color.black));
 		//files.add(fileAdd);
-		//files.add(table());
+		
 		files.add(jps);
 	
 		files.add(btnAddFile);
@@ -342,9 +325,10 @@ public class SearchEngine extends JPanel implements ActionListener{
 						"You didn't select a file", 
 						"NO FILE SELECTED!!!", 
 						JOptionPane.WARNING_MESSAGE );
-			
-			// Write file path name to text area
-			//fileAdd.append(fileName + "\n");
+			Object[] row = new Object[2];
+			row[0] = fileName;
+			row[1] = "indexed";
+			model.addRow(row);
 			
 			//get text from text area
 			//String filePath = fileAdd.getText();
