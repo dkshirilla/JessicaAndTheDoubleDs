@@ -11,9 +11,8 @@ import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
 import javax.swing.table.*;
-import javax.swing.text.JTextComponent;
-
 import java.util.*;
+
 
 public class SearchEngine extends JPanel implements ActionListener{	
 	
@@ -31,7 +30,7 @@ public class SearchEngine extends JPanel implements ActionListener{
 	JTextArea txtResults = new JTextArea(22, 40);
 	
 	//for jtable
-	String[] columnNames = {"File","Index"};
+	String[] columnNames = {"File","Last Modified"};
 	DefaultTableModel model = new DefaultTableModel();
 	Object[] row = new Object[2];
 	// Search Terms
@@ -40,7 +39,9 @@ public class SearchEngine extends JPanel implements ActionListener{
 	// Index file
 	File indexFile;
 	int numFiles;
+	long lastMod;
 	
+	@SuppressWarnings("null")
 	public SearchEngine(){
 		//used to set tabs to top left
 		super (new GridLayout(1,1));
@@ -182,26 +183,29 @@ public class SearchEngine extends JPanel implements ActionListener{
 			  		"SEARCH!!!", 
 			  		JOptionPane.INFORMATION_MESSAGE );
 			BufferedReader buffReader = null;
+			
 			try{
 				Scanner in = new Scanner(new BufferedReader(new FileReader(indexFile)));
-				//FileReader fileReader = new FileReader(indexFile);
-				//buffReader = new BufferedReader(fileReader);
-				//buffReader.readLine();
-				while(in.hasNext()){
-				//String fileResult = buffReader.readLine();
+				FileReader fileReader = new FileReader(indexFile);
+				buffReader = new BufferedReader(fileReader);
+				String fileResult = buffReader.readLine();
 				in.nextLine();
-				String fileResult = in.nextLine();
-				//jps.read(buffReader, "index.txt");
+				while(in != null){
+				fileResult = in.next();
+				lastMod = in.nextLong();
+				Date date = new Date(lastMod);
 				row[0] = fileResult;
-				row[1] = "Indexed";
+				row[1] = date;
 				model.addRow(row);
 				}
-			}
+				in.close();
+				}
 			catch(Exception mistake)
 			{
 				mistake.printStackTrace();
 			}
 		}
+	
 		else
 		{
 			numFiles = 0;
@@ -330,12 +334,13 @@ public class SearchEngine extends JPanel implements ActionListener{
 						"You didn't select a file", 
 						"NO FILE SELECTED!!!", 
 						JOptionPane.WARNING_MESSAGE );
-			//add file to jtable in file tab
-
-			row[0] = fileName;
-			row[1] = "indexed";
-			model.addRow(row);
 			
+			//add file to jtable in file tab
+			lastMod = f.lastModified();
+			Date dt = new Date(lastMod);
+			row[0] = fileName;
+			row[1] = dt;
+			model.addRow(row);
 			writeFilePath(fileName, f, numFiles);
 			
 		
@@ -432,19 +437,28 @@ public class SearchEngine extends JPanel implements ActionListener{
 	//Write file path to index file with time stamp of last modified
 	public void writeFilePath(String fileName, File f, int numFiles)
 	{
-		PrintWriter outputFilePath;
 		try
 		{
-			outputFilePath = new PrintWriter(indexFile);
-			outputFilePath.println(numFiles);
-			outputFilePath.println(fileName + " " + f.lastModified());
-			outputFilePath.close();
+		BufferedWriter bw = null;
+		FileWriter fw = null;
+		fw = new FileWriter(indexFile.getAbsoluteFile(),true);
+		bw = new BufferedWriter(fw);
+		String fileInfo = (fileName + " " + f.lastModified());
+		bw.write(fileInfo);
+		bw.newLine();
+		bw.close();
+		fw.close();
 		}
 		catch(FileNotFoundException e)
 		{
 			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
+	
+	
 	//Write the Index file
 	public void writeIndexFile(int numFiles)
 	{
@@ -463,6 +477,26 @@ public class SearchEngine extends JPanel implements ActionListener{
 			e.printStackTrace();
 		}
 	} // writeIndexFile
+	
+	/*
+	public long readLastMod(){
+		Scanner inputFile;
+		try
+		{
+			inputFile = new Scanner(indexFile);
+			inputFile.next();
+			inputFile.next();
+			lastMod = inputFile.nextLong();
+			inputFile.close();
+		}
+		catch(FileNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+		return lastMod;
+	}
+	*/
+	
 	
 	public int readIndexFile()
 	{
