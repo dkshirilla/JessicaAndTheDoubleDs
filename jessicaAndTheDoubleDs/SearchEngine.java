@@ -12,6 +12,7 @@ import java.io.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import java.util.*;
+import java.util.List;
 
 
 public class SearchEngine extends JPanel implements ActionListener{	
@@ -30,18 +31,29 @@ public class SearchEngine extends JPanel implements ActionListener{
 	JTextArea txtResults = new JTextArea(22, 40);
 	
 	//for jtable
-	String[] columnNames = {"File","Status"};
-	DefaultTableModel model = new DefaultTableModel();
+	DefaultTableModel fileTableModel = new DefaultTableModel();
 	Object[] row = new Object[2];
+	
 	// Search Terms
 	StringBuilder sbStringToParse = new StringBuilder();
 	
 	// Index file
 	File indexFile;
-	int numFiles;
-	long lastMod;
 	
-	@SuppressWarnings("null")
+	// Index data structure
+	int numFiles;
+	ArrayList<String> fileNames = new ArrayList<>();
+	List<Long> lastMod = new ArrayList<Long>();
+	ArrayList<String> wordIndex = new ArrayList<>();
+	/* Ref for 2-D array lists:  List<List<String>> listOfLists = new ArrayList<List<String>>();
+	   listOfLists.add(new ArrayList<String>()) */
+	
+	final int fileColumn = 0;
+	final int statusColumn = 1;
+
+	// long lastMod;
+	
+	// @SuppressWarnings("null") <--- what is this for? - Doug Linkhart 
 	public SearchEngine(){
 		//used to set tabs to top left
 		super (new GridLayout(1,1));
@@ -58,16 +70,15 @@ public class SearchEngine extends JPanel implements ActionListener{
 		txtSearchTerms.setBorder(BorderFactory.createLineBorder(Color.black));
 		// Add Search Terms text box to panel
 		searchPanel.add(txtSearchTerms);
-		
-		
+			
 		//Create JTable for files tab
-		JTable table = new JTable();
-		model.setColumnIdentifiers(columnNames);
-		table.setModel(model);
-		table.setPreferredScrollableViewportSize(new Dimension(500,300));
-		JScrollPane jps = new JScrollPane(table);
-		table.setFillsViewportHeight(true);
-		
+		JTable fileTable = new JTable();
+		String[] columnNames = {"File","Status"};
+		fileTableModel.setColumnIdentifiers(columnNames);
+		fileTable.setModel(fileTableModel);
+		fileTable.setPreferredScrollableViewportSize(new Dimension(500,300));
+		JScrollPane jps = new JScrollPane(fileTable);
+		fileTable.setFillsViewportHeight(true);
 		
 		// Create buttons
 		JButton btnSearch = new JButton( "Search" );
@@ -115,7 +126,6 @@ public class SearchEngine extends JPanel implements ActionListener{
 		JComponent files = textPanel("");
 		// Add Files tab 
 		tabbedPane.addTab("Files", files);
-		
 				
 		//create buttons for file tab
 		JButton btnAddFile = new JButton("Add File");
@@ -145,7 +155,7 @@ public class SearchEngine extends JPanel implements ActionListener{
 		sbAbout.append( "<html>" );
 		sbAbout.append( "<font face='Times New Roman'>" );
 		sbAbout.append( "<font size='+1'>");
-		sbAbout.append( "<br> Search Engine 1.0 <br>");
+		sbAbout.append( "<br> Search Engine 1.1 <br>");
 		sbAbout.append( "<br> COP 2805  Project 3 <br>");
 		sbAbout.append( "<font size='-1'>");
 		sbAbout.append( "<br> by Jessica and the Double Ds: <br>");
@@ -168,71 +178,65 @@ public class SearchEngine extends JPanel implements ActionListener{
 		add(tabbedPane);
 		
 		indexFile = new File( "index.txt" ); 
-		
-		
-	//	writeIndexFile();
-		
+	
+		// If the index file exists...
 		if ( indexFile.exists() )
 		{
-			numFiles = readIndexFile();
-			//numFiles = 0;
-			//writeIndexFile(numFiles);
+			readIndexFile();
+
+			// This is only for testing
 			JOptionPane.showMessageDialog( 
 			  		null, 
 			  		("numFiles = " + Integer.toString( numFiles )), 
 			  		"SEARCH!!!", 
 			  		JOptionPane.INFORMATION_MESSAGE );
 			
-			
 			//populate jtable in files tab
-			try{
-				Scanner in = new Scanner(new BufferedReader(new FileReader(indexFile)));
-				String fileResult = ""; 
-				//File file = new File(fileResult);
-				in.next();
-				while(in.hasNext() == true){
-					fileResult = in.next();
-					lastMod = in.nextLong();
-					//Date date = new Date(lastMod);
-					row[0] = fileResult;
-					File file = new File(fileResult);
-					long timeModified = (long)file.lastModified();
-					if (lastMod == timeModified){
-						row[1] = "Indexed";
-					}
-					else{
-						row[1] = "File changed since last indexed";
-					}
-					//row[1] = date;
-					model.addRow(row);
-				}
-				in.close();
-				}
-			catch(Exception mistake)
-			{
-				mistake.printStackTrace();
-			}
-		}
-	
-		else
+
+//                  Date date = new Date(lastMod);
+				    if (numFiles > 0)
+				    {
+				    	// Loop through files in index
+				    	for (int i = 0; i <= (numFiles - 1); ++i)
+				    	{
+				    		// Put the file name in the table
+				    		row[fileColumn] = fileNames.get(i);
+				    
+				    		// Create a reference to the file 
+				    		File file = new File(fileNames.get(i));
+				    		// If the file still exists...
+				    		if ( file.exists() )
+				    		{
+					    		// Check last modified date/time  of file
+				    			long timeModified = (long)file.lastModified();
+				    		
+				    			// If the file has not changed...
+				    			if (lastMod.get(i) == timeModified)
+				    			{
+				    				row[statusColumn] = "Indexed";
+				    			} // If file unchanged
+				    			else // The file changed
+				    			{
+				    				row[statusColumn] = "File changed since last indexed";
+				    			} // Else the file changed
+				    		} // If file exists
+				    		else // The file no longer exists...
+				    		{
+				    			row[statusColumn] = "File no longer exists";
+				    		}
+		
+				    		//row[statusColumn] = date;
+				    		
+				    		// Update table
+				    		fileTableModel.addRow(row);
+				    	} // For 
+				    } // If numFiles > 0
+		} // If index file exists
+		else // The index file does not exist
 		{
 			numFiles = 0;
-			writeIndexFile(numFiles);
+			writeIndexFile();
 		}
-		
-/* Find out if index file exists.  
- * If it does exist, then read it:
- * 		Read number of indexed files
- * 		Loop to read file names & timestamps in index file
- *      	Do previously indexed files still exist?
- *      		If not, set status to "no longer exists"
- *      	If so, read timestamps and compare to indexed timestamps
- *      		If timestamps agree, then set status to "indexed"
- *      		If timestamps disagree, set status to "file changed"
- *      If there is at least one file name in the index file, read the 
- *      (to be indexed later) words into the data structure 
- * If index file does not exist, create it.       				
- */
 		
 /* Suggested index file format:
  * 2                  // Number of indexed files (0 if none)... these comments will not be in the file!
@@ -250,15 +254,7 @@ public class SearchEngine extends JPanel implements ActionListener{
  * files
  * EOF
  */
-		
-/* Suggested methods we need:
- * writeIndex
- * readIndex
- * getCurrentTimestamp (may be canned one)
- * fileExists (may be canned one)
- */
-		
-		
+			
 	}//end SearchEngine()
 	
 	// Event handler
@@ -328,43 +324,51 @@ public class SearchEngine extends JPanel implements ActionListener{
 		
 		else if (e.getActionCommand().equals("addFile"))
 		{
-			
-		
 			JFileChooser chooser = new JFileChooser();
 			chooser.showOpenDialog(null);
 			File f = chooser.getSelectedFile();
 			
 			if (f != null)
+			{
 				fileName = f.getAbsolutePath();
+			
+//add file to jtable in file tab
+//			lastMod = f.lastModified();
+//Date dt = new Date(lastMod);
+//			row[fileColumn] = fileName;
+			
+				// Update file table
+				row[fileColumn] = fileName;
+				row[statusColumn] = "Indexed";
+				fileTableModel.addRow(row);
+
+				// Increment number of files
+				++numFiles;
+			
+				// Add file name to data structure
+				fileNames.add(fileName);
+			
+				// Create a reference to the file 
+				File file = new File(fileName);
+				
+				// Add last modified date/time of file to data structure
+				lastMod.add( file.lastModified() );
+
+				// Parse the file and add the words to the data structure
+				parseFile(file);
+				
+				// Write the updated data to the index file
+				writeIndexFile();
+				
+// writeFilePath(fileName, f, numFiles);
+				
+			} // If file name not null
 			else // Handle possibility of null (no file selected), which would cause exception
 				JOptionPane.showMessageDialog( 
 						null, 
 						"You didn't select a file", 
 						"NO FILE SELECTED!!!", 
 						JOptionPane.WARNING_MESSAGE );
-			
-			//add file to jtable in file tab
-			lastMod = f.lastModified();
-			//Date dt = new Date(lastMod);
-			row[0] = fileName;
-			row[1] = "Indexed";
-			model.addRow(row);
-			writeFilePath(fileName, f, numFiles);
-			
-		
-			
-			
-			
-/* This needs to be able to add multiple files to text are, an dont overwrite the ones that are already listed
- * When a file is added, it has to be indexed:
- * 		Increment number of files in index file
- * 		Add file pathname to index file
- * 		Parse the added file into words (can use getNextLexeme()) 
- * 		Add words to data structure and write the whole mess (number of files, file pathnam,es, and all words) 
- *      to the index			
- */
-			
-			
 		} // If Add File
 		
 		else if (e.getActionCommand().equals("rmvFile"))
@@ -389,14 +393,40 @@ public class SearchEngine extends JPanel implements ActionListener{
 			
 /* For each file in index...
  * 		Get the file timestamp from the file to be indexed 
- * 		Parse the file into words (can use getNextLexeme()) 
+ * 		Parse the file into words (can use getNextLexeme() or scanner()) 
  *      Update data structure 
  *      If file does not exist, remove it and its words from index
  * Rewrite the index
  * Update each file status display to "indexed" 			
 */
+		
+			// I did part of this (below), but more needs to be added  - Doug Linkhart
 			
+			// Need to remove files that no longer exist (and their contents) from index
+			
+			// Clear index so that it can be regenerated
+			wordIndex.clear();
+						
+			for (int i = 0; i <= (numFiles - 1); ++i)
+			{
+				/* Create a reference to the file 
+ 		   		   and get its last modified date/time */
+				File file = new File(fileNames.get(i));
+				long timeModified = (long)file.lastModified();
+				
+				// Set the last modified parameter in the data structure
+				lastMod.set(i, timeModified);
+							
+				parseFile(file);
+				
+				writeIndexFile();
+				
+				// Update table
+    		    fileTableModel.setValueAt("Indexed", i, statusColumn);
+			} // For
+		
 		} // If Update Index
+	
 	} // actionPerformed
 	
 	
@@ -423,27 +453,8 @@ public class SearchEngine extends JPanel implements ActionListener{
 	
 	// Read the index file
 	
-	
-	
-	//write number of index files to index file
-	public void writeNumFiles(int numFiles)
-	{
-		PrintWriter outputNum;
-		try
-		{
-			outputNum = new PrintWriter(indexFile);
-			outputNum.println(numFiles);
-			outputNum.close();
-		}
-		catch(FileNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-	}
-	
-	
 	//Write file path to index file with time stamp of last modified
-	public void writeFilePath(String fileName, File f, int numFiles)
+/*	public void writeFilePath(String fileName, File f, int numFiles)
 	{
 		try
 		{
@@ -465,46 +476,106 @@ public class SearchEngine extends JPanel implements ActionListener{
 			e.printStackTrace();
 		}
 		numFiles++;
-	}
+	} */
 	
+	public void parseFile(File file)
+	{
+		try
+		{
+			Scanner addedFile = new Scanner(file);
+			while(addedFile.hasNext())
+			{
+				// Read and index words
+				wordIndex.add(addedFile.next()); 
+				// Later, the indices will have to be read, also
+			} // While
+		
+			// Close the file
+			addedFile.close();
+		}
+		catch (FileNotFoundException e) 
+		{
+			e.printStackTrace();
+		} // Catch
+	} // parseFile
 	
 	//Write the Index file
-	public void writeIndexFile(int numFiles)
+	public void writeIndexFile()
 	{
 		PrintWriter outputFile;
 		try 
 		{
 			outputFile = new PrintWriter(indexFile);
 			outputFile.println(numFiles);
-	//		outputFile.println("test9");
-	//		outputFile.append("appended");
-	   	
+			if (numFiles > 0) // If files have been indexed
+			{
+				// Loop to write file names and last modification dates/times
+				for (int i = 0; i <= (numFiles - 1); ++i) 
+				{
+					// Write file Name
+					outputFile.println(fileNames.get(i));
+
+					// Write last modification date/time
+					outputFile.println(lastMod.get(i));
+				} // For
+				// Loop to write indexed words
+				for (int i = 0; i <= (wordIndex.size() - 1); ++i)
+				{
+					// Write indexed words
+					outputFile.println(wordIndex.get(i));
+					// Later, the indices will have to be written, also
+				} // For
+			} // If files have been indexed
+			
+			// Close the file
 			outputFile.close();
-		} 
+		} // Try
 		catch (FileNotFoundException e) 
 		{
 			e.printStackTrace();
-		}
+		} // Catch
 	} // writeIndexFile
 	
 	
-	public int readIndexFile()
+	public void readIndexFile()
+	// Need to be able to handle corrupted file? - Doug Linkhart
 	{
-		Scanner inputFile;
+	//	Scanner inputFile;
 		try 
 		{
-			inputFile = new Scanner(indexFile);
+			Scanner inputFile = new Scanner(indexFile);
 			numFiles = inputFile.nextInt();
+			if (numFiles > 0) // If files have been indexed
+			{
+				// Loop to read file names and last modification dates/times
+				for (int i = 1; i <= numFiles; ++i) 
+				{
+					// Read file Name
+					fileNames.add(inputFile.next()); // Read file Name
+					// This is only for testing
+/*					JOptionPane.showMessageDialog( 
+					  		null, 
+					  		("File Names = " + inputFile.next() ), 
+					  		"SEARCH!!!", 
+					  		JOptionPane.INFORMATION_MESSAGE ); */
+					// Read last modification date/time
+					lastMod.add(inputFile.nextLong()); 
+				} // For
+				while(inputFile.hasNext())
+				{
+					// Read indexed words
+					wordIndex.add(inputFile.next()); 
+					// Later, the indices will have to be read, also
+				} // While
+			} // If files have been indexed
 			
-			inputFile.close();
-			
-		} 
+			inputFile.close(); // Close the file
+		} // Try
 		catch (FileNotFoundException e) 
 		{
 			e.printStackTrace();
-		}
-		return numFiles;
-	} 
+		} // Catch
+	} // readIndexFile
 	
 	// Creates a panel with label containing specified text
 	protected JComponent textPanel(String text){
