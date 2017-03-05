@@ -367,7 +367,7 @@ public class SearchEngine extends JPanel implements ActionListener{
 			
 		} // If Add File
 		
-		else if (e.getActionCommand().equals("rmvFile"))
+		else if (e.getActionCommand().equals("rmvFile"))// Initial commit to Jessica Branch
 		{
 			JOptionPane.showMessageDialog(null,"You clicked the remove file button!", "REMOVE!!",
 					JOptionPane.INFORMATION_MESSAGE);
