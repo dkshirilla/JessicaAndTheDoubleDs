@@ -492,7 +492,6 @@ public class SearchEngine extends JPanel implements ActionListener{
 		
 			// Close the file
 			addedFile.close();
-			// comment
 		}
 		catch (FileNotFoundException e) 
 		{
