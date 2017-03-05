@@ -30,7 +30,7 @@ public class SearchEngine extends JPanel implements ActionListener{
 	JTextArea txtResults = new JTextArea(22, 40);
 	
 	//for jtable
-	String[] columnNames = {"File","Last Modified"};
+	String[] columnNames = {"File","Status"};
 	DefaultTableModel model = new DefaultTableModel();
 	Object[] row = new Object[2];
 	// Search Terms
@@ -187,14 +187,23 @@ public class SearchEngine extends JPanel implements ActionListener{
 			//populate jtable in files tab
 			try{
 				Scanner in = new Scanner(new BufferedReader(new FileReader(indexFile)));
-				String fileResult; 
+				String fileResult = ""; 
+				//File file = new File(fileResult);
 				in.next();
 				while(in.hasNext() == true){
 					fileResult = in.next();
 					lastMod = in.nextLong();
-					Date date = new Date(lastMod);
+					//Date date = new Date(lastMod);
 					row[0] = fileResult;
-					row[1] = date;
+					File file = new File(fileResult);
+					long timeModified = (long)file.lastModified();
+					if (lastMod == timeModified){
+						row[1] = "Indexed";
+					}
+					else{
+						row[1] = "File changed since last indexed";
+					}
+					//row[1] = date;
 					model.addRow(row);
 				}
 				in.close();
@@ -336,9 +345,9 @@ public class SearchEngine extends JPanel implements ActionListener{
 			
 			//add file to jtable in file tab
 			lastMod = f.lastModified();
-			Date dt = new Date(lastMod);
+			//Date dt = new Date(lastMod);
 			row[0] = fileName;
-			row[1] = dt;
+			row[1] = "Indexed";
 			model.addRow(row);
 			writeFilePath(fileName, f, numFiles);
 			
