@@ -17,6 +17,12 @@ import java.util.List;
 
 public class SearchEngine extends JPanel implements ActionListener{	
 	
+	
+
+	
+	
+	
+	
 	//Eclipse whines if this line isn't here...
 	private static final long serialVersionUID = 1L;
 	
@@ -586,22 +592,14 @@ public class SearchEngine extends JPanel implements ActionListener{
 		return panel; 
 	} //end filler component
 	
-	//build main container
-	private static void createAndShowGUI() {
-		JFrame frame = new JFrame("Search Engine");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		//add tabbed pane to main container
-		frame.add(new SearchEngine(), BorderLayout.CENTER);
-		
-		frame.setSize( 500, 500);
-		frame.setLocationRelativeTo( null ); // Center frame on screen
-		frame.setVisible( true );
-		frame.setResizable(false); // dont let user resize window to keep gui formatting constant 
-	}//end creatAndShowGUI()
+
 
 	public static void main(String[] args) {
-		createAndShowGUI();
+		
+		//making a reference to GUIclass
+		GUI GIU = new GUI();
+		
+		GIU.createAndShowGUI();
 	}//end main
 
 }//end class SearchEngine
