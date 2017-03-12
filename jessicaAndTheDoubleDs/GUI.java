@@ -34,12 +34,21 @@ public class GUI extends JPanel implements ActionListener{
 	
 	//Eclipse whines if this line isn't here...
 		private static final long serialVersionUID = 1L;
+		public static boolean orBtnSelected;
+		public static boolean andBtnSelected;
+		public static boolean phraseBtnSelected;
+		public static Object txtResults;
 		
 		// long lastMod;
 		
 		public GUI(){
 			//used to set tabs to top left
 			super (new GridLayout(1,1));
+			
+			
+			new SearchLogic();
+			
+			new Index();			
 			
 			//Build tabs pane
 			JTabbedPane tabbedPane = new JTabbedPane();
@@ -49,7 +58,11 @@ public class GUI extends JPanel implements ActionListener{
 			// Add Search tab
 			tabbedPane.addTab("Search", searchPanel);
 			
-			JComponent txtSearchTerms;
+			// These need to be accessible outside of the GIU method
+			// Search Tab text fields
+			JTextField txtSearchTerms = new JTextField( "Enter search terms here", 40 );
+			JTextArea txtResults = new JTextArea(22, 40);
+			
 			// Add border to Search Term text box
 			txtSearchTerms.setBorder(BorderFactory.createLineBorder(Color.black));
 			// Add Search Terms text box to panel
@@ -59,7 +72,6 @@ public class GUI extends JPanel implements ActionListener{
 				
 			//Create JTable for files tab
 			DefaultTableModel fileTableModel = new DefaultTableModel();
-			Object[] row = new Object[2];
 			JTable fileTable = new JTable();
 			String[] columnNames = {"File","Status"};
 			fileTableModel.setColumnIdentifiers(columnNames);
@@ -68,7 +80,7 @@ public class GUI extends JPanel implements ActionListener{
 			JScrollPane jps = new JScrollPane(fileTable);
 			fileTable.setFillsViewportHeight(true);
 			
-			// Create buttons
+			// Create buttons for search panel
 			JButton btnSearch = new JButton( "Search" );
 			btnSearch.setToolTipText("Click to search indexed files");
 			btnSearch.setActionCommand( "search" ); 
@@ -95,6 +107,16 @@ public class GUI extends JPanel implements ActionListener{
 			searchPanel.add( btnOr );
 			searchPanel.add( btnAnd );
 			searchPanel.add( btnPhrase );
+			
+			// Initialize radio button status
+			Boolean orBtnSelected     = true,
+					andBtnSelected    = false,
+					phraseBtnSelected = false;
+			
+
+			
+
+			new StringBuilder();
 			
 			// Set buttons to according to status that was initialized previously
 			btnOr.setSelected( orBtnSelected );
@@ -164,8 +186,7 @@ public class GUI extends JPanel implements ActionListener{
 			tabbedPane.addTab("About", aboutPanel);
 			
 			add(tabbedPane);
-			
-				}//end SearchEngine()
+		}
 		
 		// Event handler
 		public void actionPerformed(ActionEvent e) 
@@ -175,47 +196,14 @@ public class GUI extends JPanel implements ActionListener{
 			
 			if (e.getActionCommand().equals("search")) 
 			{
-				JOptionPane.showMessageDialog( 
-		  		null, 
-		  		"You clicked the Search button...", 
-		  		"SEARCH!!!", 
-		  		JOptionPane.INFORMATION_MESSAGE );
-				
-				sbStringToParse.append( txtSearchTerms.getText() );
-				
-				StringBuilder sbResults = new StringBuilder();
-				sbResults.append( "No results found. \r\n \r\n" );
-				sbResults.append( "You searched for:\r\n \r\n" );
-				
-				// While there are still Search Terms in the string
-				while ( sbStringToParse.length() > 0 ) 
-				{
-					nextLexeme = getNextLexeme(); // Get the next Search Term (lexeme)
-					sbResults.append( nextLexeme + " " ); 
-					
-					// If OR and not end of search-term string
-					if ( orBtnSelected && sbStringToParse.length() > 0 ) 
-						sbResults.append( "OR " );
-									
-					// If AND and not end of search-term string
-					if ( andBtnSelected && sbStringToParse.length() > 0 )
-						sbResults.append( "AND " );
-									
-					// If PHRASE and end of search-term string
-					if ( phraseBtnSelected && sbStringToParse.length() <= 0 )
-						sbResults.append( "(PHRASE; terms in this order) " );
-				} // While
-				
-				// Write string to results text area
-				txtResults.setText( sbResults.toString() );
-				
-			} // If search
+				SearchLogic.Search();
+
+			}// If Search
 			
 			else if (e.getActionCommand().equals("or"))
 			{
-				orBtnSelected     = true;
-				andBtnSelected    = false;
-				phraseBtnSelected = false;
+				SearchLogic.or();
+
 			} // If OR
 			
 			else if (e.getActionCommand().equals("and"))
@@ -339,27 +327,6 @@ public class GUI extends JPanel implements ActionListener{
 		
 		} // actionPerformed
 		
-		
-		// Parses the Search Term string by returning the next lexeme
-		public String getNextLexeme()
-		{
-			int i; // i needs to be in-scope outside of for loop
-			String lexeme;
-			
-			// Loop to look at each character in the string
-			for ( i = 0; i < sbStringToParse.length(); i++ ) 
-				// If a space is found, marking the end of a lexeme...
-				if ( sbStringToParse.substring(i, i + 1).equals( " " ) ) 
-					break; // Break out of the loop
-			
-			// Copy the first lexeme found in the string
-			lexeme = sbStringToParse.substring(0, i);
-			
-			// Remove the lexeme from the string
-			sbStringToParse.delete( 0, i + 1);  
-
-			return lexeme;
-		} // getNextLexeme
 		
 		// Read the index file
 		
