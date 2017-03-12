@@ -30,6 +30,114 @@ public class Index {
 	   listOfLists.add(new ArrayList<String>()) */
 	
 	
+	
+	
+	// Read the index file
+	
+	//Write file path to index file with time stamp of last modified
+/*	public void writeFilePath(String fileName, File f, int numFiles)
+	{
+		try
+		{
+		BufferedWriter bw = null;
+		FileWriter fw = null;
+		fw = new FileWriter(indexFile.getAbsoluteFile(),true);
+		bw = new BufferedWriter(fw);
+		String fileInfo = (fileName + " " + f.lastModified());
+		bw.write(fileInfo);
+		bw.newLine();
+		bw.close();
+		fw.close();
+		}
+		catch(FileNotFoundException e)
+		{
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		numFiles++;
+	} */
+	
+	
+	//Write the Index file
+/*		public void writeIndexFile()
+	{
+		PrintWriter outputFile;
+		try 
+		{
+			outputFile = new PrintWriter(indexFile);
+			outputFile.println(numFiles);
+			if (numFiles > 0) // If files have been indexed
+			{
+				// Loop to write file names and last modification dates/times
+				for (int i = 0; i <= (numFiles - 1); ++i) 
+				{
+					// Write file Name
+					outputFile.println(fileNames.get(i));
+
+					// Write last modification date/time
+					outputFile.println(lastMod.get(i));
+				} // For
+				// Loop to write indexed words
+				for (int i = 0; i <= (wordIndex.size() - 1); ++i)
+				{
+					// Write indexed words
+					outputFile.println(wordIndex.get(i));
+					// Later, the indices will have to be written, also
+				} // For
+			} // If files have been indexed
+			
+			// Close the file
+			outputFile.close();
+		} // Try
+		catch (FileNotFoundException e) 
+		{
+			e.printStackTrace();
+		} // Catch
+	} // writeIndexFile*/
+	
+	
+/*		public void readIndexFile()
+	// Need to be able to handle corrupted file? - Doug Linkhart
+	{
+	//	Scanner inputFile;
+		try 
+		{
+			Scanner inputFile = new Scanner(indexFile);
+			numFiles = inputFile.nextInt();
+			if (numFiles > 0) // If files have been indexed
+			{
+				// Loop to read file names and last modification dates/times
+				for (int i = 1; i <= numFiles; ++i) 
+				{
+					// Read file Name
+					fileNames.add(inputFile.next()); // Read file Name
+					// This is only for testing
+/*					JOptionPane.showMessageDialog( 
+					  		null, 
+					  		("File Names = " + inputFile.next() ), 
+					  		"SEARCH!!!", 
+					  		JOptionPane.INFORMATION_MESSAGE ); 
+					// Read last modification date/time
+					lastMod.add(inputFile.nextLong()); 
+				} // For
+				while(inputFile.hasNext())
+				{
+					// Read indexed words
+					wordIndex.add(inputFile.next()); 
+					// Later, the indices will have to be read, also
+				} // While
+			} // If files have been indexed
+			
+			inputFile.close(); // Close the file
+		} // Try
+		catch (FileNotFoundException e) 
+		{
+			e.printStackTrace();
+		} // Catch
+	} // readIndexFile*/
+	
 
 	
 	//Write the Index file

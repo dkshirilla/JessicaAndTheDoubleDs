@@ -1,11 +1,14 @@
 package jessicaAndTheDoubleDs;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
 public class Utils {
 
 
 	
 	// Parses the Search Term string by returning the next lexeme
-			//Need to move this to Utils Class
 			public static String getNextLexeme()
 			{
 				int i; // i needs to be in-scope outside of for loop
@@ -25,5 +28,27 @@ public class Utils {
 
 				return lexeme;
 			} // getNextLexeme
+			
+			public void parseFile(File file)
+			{
+				try
+				{
+					Scanner addedFile = new Scanner(file);
+					while(addedFile.hasNext())
+					{
+						// Read and index words
+						wordIndex.add(addedFile.next()); 
+						// Later, the indices will have to be read, also
+					} // While
+				
+					// Close the file
+					addedFile.close();
+				}
+				catch (FileNotFoundException e) 
+				{
+					e.printStackTrace();
+				} // Catch
+			} // parseFile
+
 
 }

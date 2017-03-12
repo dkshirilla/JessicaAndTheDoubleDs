@@ -2,6 +2,7 @@ package jessicaAndTheDoubleDs;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -34,6 +35,8 @@ public class GUI extends JPanel implements ActionListener{
 	
 	//Eclipse whines if this line isn't here...
 		private static final long serialVersionUID = 1L;
+		
+        // These need to be accessable to other classes
 		public static boolean orBtnSelected;
 		public static boolean andBtnSelected;
 		public static boolean phraseBtnSelected;
@@ -45,10 +48,11 @@ public class GUI extends JPanel implements ActionListener{
 			//used to set tabs to top left
 			super (new GridLayout(1,1));
 			
+			//making classes accessible
+			new SearchLogic();			
+			new Index();	
 			
-			new SearchLogic();
 			
-			new Index();			
 			
 			//Build tabs pane
 			JTabbedPane tabbedPane = new JTabbedPane();
@@ -326,143 +330,17 @@ public class GUI extends JPanel implements ActionListener{
 			} // If Update Index
 		
 		} // actionPerformed
-		
-		
-		// Read the index file
-		
-		//Write file path to index file with time stamp of last modified
-	/*	public void writeFilePath(String fileName, File f, int numFiles)
-		{
-			try
-			{
-			BufferedWriter bw = null;
-			FileWriter fw = null;
-			fw = new FileWriter(indexFile.getAbsoluteFile(),true);
-			bw = new BufferedWriter(fw);
-			String fileInfo = (fileName + " " + f.lastModified());
-			bw.write(fileInfo);
-			bw.newLine();
-			bw.close();
-			fw.close();
-			}
-			catch(FileNotFoundException e)
-			{
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			numFiles++;
-		} */
-		
-		public void parseFile(File file)
-		{
-			try
-			{
-				Scanner addedFile = new Scanner(file);
-				while(addedFile.hasNext())
-				{
-					// Read and index words
-					wordIndex.add(addedFile.next()); 
-					// Later, the indices will have to be read, also
-				} // While
-			
-				// Close the file
-				addedFile.close();
-			}
-			catch (FileNotFoundException e) 
-			{
-				e.printStackTrace();
-			} // Catch
-		} // parseFile
-		
-		//Write the Index file
-/*		public void writeIndexFile()
-		{
-			PrintWriter outputFile;
-			try 
-			{
-				outputFile = new PrintWriter(indexFile);
-				outputFile.println(numFiles);
-				if (numFiles > 0) // If files have been indexed
-				{
-					// Loop to write file names and last modification dates/times
-					for (int i = 0; i <= (numFiles - 1); ++i) 
-					{
-						// Write file Name
-						outputFile.println(fileNames.get(i));
 
-						// Write last modification date/time
-						outputFile.println(lastMod.get(i));
-					} // For
-					// Loop to write indexed words
-					for (int i = 0; i <= (wordIndex.size() - 1); ++i)
-					{
-						// Write indexed words
-						outputFile.println(wordIndex.get(i));
-						// Later, the indices will have to be written, also
-					} // For
-				} // If files have been indexed
-				
-				// Close the file
-				outputFile.close();
-			} // Try
-			catch (FileNotFoundException e) 
-			{
-				e.printStackTrace();
-			} // Catch
-		} // writeIndexFile*/
-		
-		
-/*		public void readIndexFile()
-		// Need to be able to handle corrupted file? - Doug Linkhart
-		{
-		//	Scanner inputFile;
-			try 
-			{
-				Scanner inputFile = new Scanner(indexFile);
-				numFiles = inputFile.nextInt();
-				if (numFiles > 0) // If files have been indexed
-				{
-					// Loop to read file names and last modification dates/times
-					for (int i = 1; i <= numFiles; ++i) 
-					{
-						// Read file Name
-						fileNames.add(inputFile.next()); // Read file Name
-						// This is only for testing
-	/*					JOptionPane.showMessageDialog( 
-						  		null, 
-						  		("File Names = " + inputFile.next() ), 
-						  		"SEARCH!!!", 
-						  		JOptionPane.INFORMATION_MESSAGE ); 
-						// Read last modification date/time
-						lastMod.add(inputFile.nextLong()); 
-					} // For
-					while(inputFile.hasNext())
-					{
-						// Read indexed words
-						wordIndex.add(inputFile.next()); 
-						// Later, the indices will have to be read, also
-					} // While
-				} // If files have been indexed
-				
-				inputFile.close(); // Close the file
-			} // Try
-			catch (FileNotFoundException e) 
-			{
-				e.printStackTrace();
-			} // Catch
-		} // readIndexFile*/
 	
 	
-	// Creates a panel with label containing specified text
-	protected JComponent textPanel(String text){
+	
+	protected static JComponent textPanel(String text){
 		JPanel panel = new JPanel(false);
 		JLabel filler = new JLabel(text);
 		filler.setHorizontalAlignment(JLabel.CENTER);
 		panel.add(filler);
 		return panel; 
-	} //end filler component
+	} //
 	
 	
 	//build main container
@@ -476,8 +354,8 @@ public class GUI extends JPanel implements ActionListener{
 			frame.setLocationRelativeTo( null ); // Center frame on screen
 			frame.setVisible( true );
 			frame.setResizable(false); // dont let user resize window to keep gui formatting constant 
-			
-			
+			frame.add(new GIU(), BorderLayout.CENTER);
+						
 			
 		}//end creatAndShowGUI()
 
