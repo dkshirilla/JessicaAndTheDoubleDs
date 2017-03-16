@@ -1,8 +1,8 @@
 /*Created by Jessica Stepp, Douglas Shirilla,
  * Douglas Linkhart, and Brandon Quijano
- * Java II 2017 Project 3 - Search Engine:
- * creating a GUI file search
- * that includes file upload and deletion tools.
+ * Java II 2017 Project 4 - Search Engine:
+ * creating a GUI file search engine
+ * that includes file addition and deletion tools.
  */
 package jessicaAndTheDoubleDs; // Team name
 
@@ -14,9 +14,7 @@ import javax.swing.table.*;
 import java.util.*;
 import java.util.List;
 
-
 public class SearchEngine extends JPanel implements ActionListener{	
-	
 	//Eclipse whines if this line isn't here...
 	private static final long serialVersionUID = 1L;
 	
@@ -28,14 +26,14 @@ public class SearchEngine extends JPanel implements ActionListener{
 	// These need to be accessible outside of the SearchEngine method
 	// Search Tab text fields
 	JTextField txtSearchTerms = new JTextField( "Enter search terms here", 40 );
-	JTextArea txtResults = new JTextArea(22, 40);
+	JTextArea txtResults = new JTextArea(25, 70);
 	
-	//for jtable
+	// File Table
 	DefaultTableModel fileTableModel = new DefaultTableModel();
+	JTable fileTable = new JTable();
 	Object[] row = new Object[2];
-	
-	// Search Terms
-	StringBuilder sbStringToParse = new StringBuilder();
+	final int fileColumn = 0;
+	final int statusColumn = 1;
 	
 	// Index file
 	File indexFile;
@@ -45,20 +43,12 @@ public class SearchEngine extends JPanel implements ActionListener{
 	ArrayList<String> fileNames = new ArrayList<>();
 	List<Long> lastMod = new ArrayList<Long>();
 	ArrayList<String> wordIndex = new ArrayList<>();
-	/* Ref for 2-D array lists:  List<List<String>> listOfLists = new ArrayList<List<String>>();
-	   listOfLists.add(new ArrayList<String>()) */
-	
-	final int fileColumn = 0;
-	final int statusColumn = 1;
 
-	// long lastMod;
-	
-	// @SuppressWarnings("null") <--- what is this for? - Doug Linkhart 
 	public SearchEngine(){
-		//used to set tabs to top left
+		// Set tabs to top left
 		super (new GridLayout(1,1));
 		
-		//Build tabs pane
+		// Build tabs pane
 		JTabbedPane tabbedPane = new JTabbedPane();
 		
 		// Add Search panel
@@ -71,16 +61,15 @@ public class SearchEngine extends JPanel implements ActionListener{
 		// Add Search Terms text box to panel
 		searchPanel.add(txtSearchTerms);
 			
-		//Create JTable for files tab
-		JTable fileTable = new JTable();
-		String[] columnNames = {"File","Status"};
+		// Create JTable for files tab
+		String[] columnNames = {"File", "Status"};
 		fileTableModel.setColumnIdentifiers(columnNames);
 		fileTable.setModel(fileTableModel);
-		fileTable.setPreferredScrollableViewportSize(new Dimension(500,300));
+		fileTable.setPreferredScrollableViewportSize(new Dimension(760, 300));
 		JScrollPane jps = new JScrollPane(fileTable);
 		fileTable.setFillsViewportHeight(true);
 		
-		// Create buttons
+		// Create buttons for Search tab
 		JButton btnSearch = new JButton( "Search" );
 		btnSearch.setToolTipText("Click to search indexed files");
 		btnSearch.setActionCommand( "search" ); 
@@ -122,12 +111,12 @@ public class SearchEngine extends JPanel implements ActionListener{
 		// Add Results box to panel
 		searchPanel.add(txtResults);
 		
-		// Add File Upload/Update panel
+		// Add File Add/Remove/Index Update panel
 		JComponent files = textPanel("");
 		// Add Files tab 
 		tabbedPane.addTab("Files", files);
 				
-		//create buttons for file tab
+		// Create buttons for file tab
 		JButton btnAddFile = new JButton("Add File");
 		btnAddFile.setToolTipText("Open browse window to select and add a file");
 		btnAddFile.setActionCommand("addFile");
@@ -142,10 +131,10 @@ public class SearchEngine extends JPanel implements ActionListener{
 		btnUpdateFiles.setToolTipText("Update the index if they have been modified");
 		btnUpdateFiles.setActionCommand("updateFiles");
 		btnUpdateFiles.addActionListener(this);
-	
-		//add jtable to file tab
+		
+		// Add jtable to file tab
 		files.add(jps);
-		//add buttons to file tab
+		// Add buttons to file tab
 		files.add(btnAddFile);
 		files.add(btnRmvFile);
 		files.add(btnUpdateFiles);
@@ -179,126 +168,61 @@ public class SearchEngine extends JPanel implements ActionListener{
 		
 		indexFile = new File( "index.txt" ); 
 	
+		// Initialize file table and data structure 
 		// If the index file exists...
 		if ( indexFile.exists() )
 		{
 			readIndexFile();
-
-			// This is only for testing
-			JOptionPane.showMessageDialog( 
-			  		null, 
-			  		("numFiles = " + Integer.toString( numFiles )), 
-			  		"SEARCH!!!", 
-			  		JOptionPane.INFORMATION_MESSAGE );
 			
-			//populate jtable in files tab
-
-//                  Date date = new Date(lastMod);
-				    if (numFiles > 0)
-				    {
-				    	// Loop through files in index
-				    	for (int i = 0; i <= (numFiles - 1); ++i)
-				    	{
-				    		// Put the file name in the table
-				    		row[fileColumn] = fileNames.get(i);
+			// Populate files table
+		    if (numFiles > 0)
+		    {
+		    	// Loop through files in index
+		    	for (int i = 0; i <= (numFiles - 1); ++i)
+		    	{
+		    		// Put the file name in the table
+		    		row[fileColumn] = fileNames.get(i);
 				    
-				    		// Create a reference to the file 
-				    		File file = new File(fileNames.get(i));
-				    		// If the file still exists...
-				    		if ( file.exists() )
-				    		{
-					    		// Check last modified date/time  of file
-				    			long timeModified = (long)file.lastModified();
-				    		
-				    			// If the file has not changed...
-				    			if (lastMod.get(i) == timeModified)
-				    			{
-				    				row[statusColumn] = "Indexed";
-				    			} // If file unchanged
-				    			else // The file changed
-				    			{
-				    				row[statusColumn] = "File changed since last indexed";
-				    			} // Else the file changed
-				    		} // If file exists
-				    		else // The file no longer exists...
-				    		{
-				    			row[statusColumn] = "File no longer exists";
-				    		}
-		
-				    		//row[statusColumn] = date;
-				    		
-				    		// Update table
-				    		fileTableModel.addRow(row);
-				    	} // For 
-				    } // If numFiles > 0
+		    		// Create a reference to the file 
+		    		File file = new File(fileNames.get(i));
+		    		// If the file still exists...
+		    		if ( file.exists() )
+		    		{
+			    		// Check last modified date/time  of file
+		    			long timeModified = (long)file.lastModified();
+    		
+		    			// If the file has not changed...
+		    			if (lastMod.get(i) == timeModified)
+		    			{
+		    				row[statusColumn] = "Indexed";
+		    			} // If file unchanged
+		    			else // The file changed
+		    			{
+		    				row[statusColumn] = "File changed since last indexed";
+		    			} // Else the file changed
+		    		} // If file exists
+		    		else // The file no longer exists...
+		    		{
+		    			row[statusColumn] = "File no longer exists";
+		    		}
+		    		// Update table
+		    		fileTableModel.addRow(row);
+		    	} // For 
+			} // If numFiles > 0
 		} // If index file exists
 		else // The index file does not exist
 		{
 			numFiles = 0;
 			writeIndexFile();
 		}
-		
-/* Suggested index file format:
- * 2                  // Number of indexed files (0 if none)... these comments will not be in the file!
- * c:\data.txt        // First file pathname
- * (timestamp in integer form) 
- * c:\data2.txt       // Second file pathname
- * (timestamp in integer form)
- * These              // Indexed words to EOF...
- * are 
- * words
- * that
- * were 
- * in
- * the
- * files
- * EOF
- */
-			
-	}//end SearchEngine()
+	} // SearchEngine()
 	
 	// Event handler
 	public void actionPerformed(ActionEvent e) 
 	{
-		String nextLexeme = "",
-			   fileName	  = "";
-		
 		if (e.getActionCommand().equals("search")) 
 		{
-			JOptionPane.showMessageDialog( 
-	  		null, 
-	  		"You clicked the Search button...", 
-	  		"SEARCH!!!", 
-	  		JOptionPane.INFORMATION_MESSAGE );
-			
-			sbStringToParse.append( txtSearchTerms.getText() );
-			
-			StringBuilder sbResults = new StringBuilder();
-			sbResults.append( "No results found. \r\n \r\n" );
-			sbResults.append( "You searched for:\r\n \r\n" );
-			
-			// While there are still Search Terms in the string
-			while ( sbStringToParse.length() > 0 ) 
-			{
-				nextLexeme = getNextLexeme(); // Get the next Search Term (lexeme)
-				sbResults.append( nextLexeme + " " ); 
-				
-				// If OR and not end of search-term string
-				if ( orBtnSelected && sbStringToParse.length() > 0 ) 
-					sbResults.append( "OR " );
-								
-				// If AND and not end of search-term string
-				if ( andBtnSelected && sbStringToParse.length() > 0 )
-					sbResults.append( "AND " );
-								
-				// If PHRASE and end of search-term string
-				if ( phraseBtnSelected && sbStringToParse.length() <= 0 )
-					sbResults.append( "(PHRASE; terms in this order) " );
-			} // While
-			
-			// Write string to results text area
-			txtResults.setText( sbResults.toString() );
-			
+			doSearch();
 		} // If search
 		
 		else if (e.getActionCommand().equals("or"))
@@ -324,160 +248,165 @@ public class SearchEngine extends JPanel implements ActionListener{
 		
 		else if (e.getActionCommand().equals("addFile"))
 		{
-			JFileChooser chooser = new JFileChooser();
-			chooser.showOpenDialog(null);
-			File f = chooser.getSelectedFile();
-			
-			if (f != null)
-			{
-				fileName = f.getAbsolutePath();
-			
-//add file to jtable in file tab
-//			lastMod = f.lastModified();
-//Date dt = new Date(lastMod);
-//			row[fileColumn] = fileName;
-			
-				// Update file table
-				row[fileColumn] = fileName;
-				row[statusColumn] = "Indexed";
-				fileTableModel.addRow(row);
-
-				// Increment number of files
-				++numFiles;
-			
-				// Add file name to data structure
-				fileNames.add(fileName);
-			
-				// Create a reference to the file 
-				File file = new File(fileName);
-				
-				// Add last modified date/time of file to data structure
-				lastMod.add( file.lastModified() );
-
-				// Parse the file and add the words to the data structure
-				parseFile(file);
-				
-				// Write the updated data to the index file
-				writeIndexFile();
-				
-// writeFilePath(fileName, f, numFiles);
-				
-			} // If file name not null
-			else // Handle possibility of null (no file selected), which would cause exception
-				JOptionPane.showMessageDialog( 
-						null, 
-						"You didn't select a file", 
-						"NO FILE SELECTED!!!", 
-						JOptionPane.WARNING_MESSAGE );
+			addFile();
 		} // If Add File
 		
 		else if (e.getActionCommand().equals("rmvFile"))
 		{
-			JOptionPane.showMessageDialog(null,"You clicked the remove file button!", "REMOVE!!",
-					JOptionPane.INFORMATION_MESSAGE);
-			
-/* Need a way to select the file to be removed
- * Decrement number of files in index 
- * Remove file pathname from list of file pathnames
- * Eventually, the indexed words pertaining to this file will have to removed from the 
- * data structure (or at least not written back to disk), but this is probably too much 
- * for Part II of the project
- * Rewrite the index			
- */
+			removeFile();
 		} // If Remove File
 		
 		else if (e.getActionCommand().equals("updateFiles"))
 		{
-			JOptionPane.showMessageDialog(null,"You clicked the update index button!", "UPDATE!!",
-					JOptionPane.INFORMATION_MESSAGE);
-			
-/* For each file in index...
- * 		Get the file timestamp from the file to be indexed 
- * 		Parse the file into words (can use getNextLexeme() or scanner()) 
- *      Update data structure 
- *      If file does not exist, remove it and its words from index
- * Rewrite the index
- * Update each file status display to "indexed" 			
-*/
-		
-			// I did part of this (below), but more needs to be added  - Doug Linkhart
-			
-			// Need to remove files that no longer exist (and their contents) from index
-			
-			// Clear index so that it can be regenerated
-			wordIndex.clear();
-						
-			for (int i = 0; i <= (numFiles - 1); ++i)
-			{
-				/* Create a reference to the file 
- 		   		   and get its last modified date/time */
-				File file = new File(fileNames.get(i));
-				long timeModified = (long)file.lastModified();
-				
-				// Set the last modified parameter in the data structure
-				lastMod.set(i, timeModified);
-							
-				parseFile(file);
-				
-				writeIndexFile();
-				
-				// Update table
-    		    fileTableModel.setValueAt("Indexed", i, statusColumn);
-			} // For
-		
+			updateIndex();
 		} // If Update Index
 	
 	} // actionPerformed
 	
-	
-	// Parses the Search Term string by returning the next lexeme
-	public String getNextLexeme()
+	public void removeFile()
 	{
-		int i; // i needs to be in-scope outside of for loop
-		String lexeme;
-		
-		// Loop to look at each character in the string
-		for ( i = 0; i < sbStringToParse.length(); i++ ) 
-			// If a space is found, marking the end of a lexeme...
-			if ( sbStringToParse.substring(i, i + 1).equals( " " ) ) 
-				break; // Break out of the loop
-		
-		// Copy the first lexeme found in the string
-		lexeme = sbStringToParse.substring(0, i);
-		
-		// Remove the lexeme from the string
-		sbStringToParse.delete( 0, i + 1);  
+		// Get row selected by user for deletion
+		int rowToRemove = fileTable.getSelectedRow();
+	
+		// Remove the row from the table
+		fileTableModel.removeRow(rowToRemove);
+	
+		// Update data structure
+		--numFiles;
+		fileNames.remove(rowToRemove);
+		lastMod.remove(rowToRemove);
 
-		return lexeme;
-	} // getNextLexeme
+		updateIndex();
+	} // removeFile
 	
-	// Read the index file
-	
-	//Write file path to index file with time stamp of last modified
-/*	public void writeFilePath(String fileName, File f, int numFiles)
+	// Add a file
+	public void addFile()
 	{
-		try
-		{
-		BufferedWriter bw = null;
-		FileWriter fw = null;
-		fw = new FileWriter(indexFile.getAbsoluteFile(),true);
-		bw = new BufferedWriter(fw);
-		String fileInfo = (fileName + " " + f.lastModified());
-		bw.write(fileInfo);
-		bw.newLine();
-		bw.close();
-		fw.close();
-		}
-		catch(FileNotFoundException e)
-		{
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		numFiles++;
-	} */
+		// File chooser dialog box
+		JFileChooser chooser = new JFileChooser();
+		chooser.showOpenDialog(null);
+		File f = chooser.getSelectedFile();
 	
+		if (f != null) // If a file was selected...
+		{
+			String fileName = f.getAbsolutePath();
+	
+			// Update file table
+			row[fileColumn] = fileName;
+			row[statusColumn] = "Indexed";
+			fileTableModel.addRow(row);
+
+			// Increment number of files
+			++numFiles;
+	
+			// Add file name to data structure
+			fileNames.add(fileName);
+	
+			// Create a reference to the file 
+			File file = new File(fileName);
+		
+			// Add last modified date/time of file to data structure
+			lastMod.add( file.lastModified() );
+
+			// Parse the file and add the words to the data structure
+			parseFile(file);
+		
+			// Write the updated data to the index file
+			writeIndexFile();
+		
+		} // If file name not null
+		else // Handle possibility of null (no file selected), which would cause exception
+			JOptionPane.showMessageDialog( 
+					null, 
+					"You didn't select a file", 
+					"NO FILE SELECTED!!!", 
+					JOptionPane.WARNING_MESSAGE );
+	} // add File
+	
+	// Do a Search
+	public void doSearch()
+	{
+		Scanner searchTerms = new Scanner(txtSearchTerms.getText());
+	
+		StringBuilder sbResults = new StringBuilder();
+		sbResults.append( "No results found. \r\n \r\n" );
+		sbResults.append( "You searched for:\r\n \r\n" );
+	
+		// While there are still search terms...
+		while(searchTerms.hasNext()) 
+		{
+			sbResults.append( searchTerms.next() + " " ); 
+		
+			// If OR and not last search term
+			if ( orBtnSelected && searchTerms.hasNext() ) 
+				sbResults.append( "OR " );
+						
+			// If AND and not last search term
+			if ( andBtnSelected && searchTerms.hasNext() )
+				sbResults.append( "AND " );
+						
+			// If PHRASE and last search term
+			if ( phraseBtnSelected && !searchTerms.hasNext() )
+				sbResults.append( "(PHRASE; terms in this order) " );
+		} // While
+	
+		// Write string to results text area
+		txtResults.setText( sbResults.toString() );
+	
+		// Close scanner
+		searchTerms.close();
+	} // doSearch
+	
+	// Updates the index file
+	public void updateIndex()
+	{
+		// Clear index so that it can be regenerated
+		wordIndex.clear();
+		
+		// numFiles may change in loop, so assign to loop control variable
+		int numFilesInit = numFiles;
+					
+		for (int i = 0; i <= (numFilesInit - 1); ++i)
+		{
+			if (i > (numFiles - 1)) // If all files have been indexed already... 
+			{
+				// Break out of the loop				
+				break;
+			}
+			
+			// Create a reference to the file 
+		   	File file = new File(fileNames.get(i));
+    		if ( file.exists() )  // If the file still exists...
+    		{
+    			// Get its last modified time/date
+    			long timeModified = (long)file.lastModified();
+			
+			   // Set the last modified parameter in the data structure
+			   lastMod.set(i, timeModified);
+						
+			   parseFile(file);
+			
+			   // Update table
+		       fileTableModel.setValueAt("Indexed", i, statusColumn);
+    		} // If file exists
+    		else // File no longer exists...
+    		{
+    			// Remove the file from the table
+    			fileTableModel.removeRow(i);
+    			
+    			// Update data structure 
+    			--numFiles;
+    			fileNames.remove(i);
+    			lastMod.remove(i);
+    			
+    			// Make sure all files are indexed
+    			updateIndex();
+    		} // Else file no longer exists
+		} // For
+		writeIndexFile();
+	} // updateIndex 
+	
+	// Parses file
 	public void parseFile(File file)
 	{
 		try
@@ -487,12 +416,11 @@ public class SearchEngine extends JPanel implements ActionListener{
 			{
 				// Read and index words
 				wordIndex.add(addedFile.next()); 
-				// Later, the indices will have to be read, also
 			} // While
 		
 			// Close the file
 			addedFile.close();
-		}
+		} // Try
 		catch (FileNotFoundException e) 
 		{
 			e.printStackTrace();
@@ -523,7 +451,6 @@ public class SearchEngine extends JPanel implements ActionListener{
 				{
 					// Write indexed words
 					outputFile.println(wordIndex.get(i));
-					// Later, the indices will have to be written, also
 				} // For
 			} // If files have been indexed
 			
@@ -536,11 +463,10 @@ public class SearchEngine extends JPanel implements ActionListener{
 		} // Catch
 	} // writeIndexFile
 	
-	
+	// Read the index file
 	public void readIndexFile()
 	// Need to be able to handle corrupted file? - Doug Linkhart
 	{
-	//	Scanner inputFile;
 		try 
 		{
 			Scanner inputFile = new Scanner(indexFile);
@@ -552,20 +478,14 @@ public class SearchEngine extends JPanel implements ActionListener{
 				{
 					// Read file Name
 					fileNames.add(inputFile.next()); // Read file Name
-					// This is only for testing
-/*					JOptionPane.showMessageDialog( 
-					  		null, 
-					  		("File Names = " + inputFile.next() ), 
-					  		"SEARCH!!!", 
-					  		JOptionPane.INFORMATION_MESSAGE ); */
+
 					// Read last modification date/time
 					lastMod.add(inputFile.nextLong()); 
 				} // For
-				while(inputFile.hasNext())
+				while(inputFile.hasNext()) // While there are more words...
 				{
 					// Read indexed words
 					wordIndex.add(inputFile.next()); 
-					// Later, the indices will have to be read, also
 				} // While
 			} // If files have been indexed
 			
@@ -586,7 +506,7 @@ public class SearchEngine extends JPanel implements ActionListener{
 		return panel; 
 	} //end filler component
 	
-	//build main container
+	// Build main container
 	private static void createAndShowGUI() {
 		JFrame frame = new JFrame("Search Engine");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -594,14 +514,13 @@ public class SearchEngine extends JPanel implements ActionListener{
 		//add tabbed pane to main container
 		frame.add(new SearchEngine(), BorderLayout.CENTER);
 		
-		frame.setSize( 500, 500);
+		frame.setSize( 800, 500);
 		frame.setLocationRelativeTo( null ); // Center frame on screen
 		frame.setVisible( true );
 		frame.setResizable(false); // dont let user resize window to keep gui formatting constant 
-	}//end creatAndShowGUI()
+	} // creatAndShowGUI()
 
 	public static void main(String[] args) {
 		createAndShowGUI();
-	}//end main
-
+	} // main
 }//end class SearchEngine
