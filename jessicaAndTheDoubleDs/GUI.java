@@ -240,27 +240,27 @@ public class GUI extends JPanel implements ActionListener{
 //				row[fileColumn] = fileName;
 				
 					// Update file table
-					row[fileColumn] = fileName;
-					row[statusColumn] = "Indexed";
-					fileTableModel.addRow(row);
+	//				row[fileColumn] = fileName;
+	//				row[statusColumn] = "Indexed";
+		//			fileTableModel.addRow(row);
 
 					// Increment number of files
-					++numFiles;
+	//				++numFiles;
 				
 					// Add file name to data structure
-					fileNames.add(fileName);
+	//				fileNames.add(fileName);
 				
 					// Create a reference to the file 
 					File file = new File(fileName);
 					
 					// Add last modified date/time of file to data structure
-					lastMod.add( file.lastModified() );
+	//				lastMod.add( file.lastModified() );
 
 					// Parse the file and add the words to the data structure
-					parseFile(file);
+	//				parseFile(file);
 					
 					// Write the updated data to the index file
-					writeIndexFile();
+	//				writeIndexFile();
 					
 	// writeFilePath(fileName, f, numFiles);
 					
@@ -307,25 +307,25 @@ public class GUI extends JPanel implements ActionListener{
 				// Need to remove files that no longer exist (and their contents) from index
 				
 				// Clear index so that it can be regenerated
-				wordIndex.clear();
+//				wordIndex.clear();
 							
-				for (int i = 0; i <= (numFiles - 1); ++i)
-				{
+	//			for (int i = 0; i <= (numFiles - 1); ++i)
+	//			{
 					/* Create a reference to the file 
 	 		   		   and get its last modified date/time */
-					File file = new File(fileNames.get(i));
-					long timeModified = (long)file.lastModified();
+		//			File file = new File(fileNames.get(i));
+			//		long timeModified = (long)file.lastModified();
 					
 					// Set the last modified parameter in the data structure
-					lastMod.set(i, timeModified);
+		//			lastMod.set(i, timeModified);
 								
-					parseFile(file);
+	//				parseFile(file);
 					
-					writeIndexFile();
+		//			writeIndexFile();
 					
 					// Update table
-	    		    fileTableModel.setValueAt("Indexed", i, statusColumn);
-				} // For
+	  //  		    fileTableModel.setValueAt("Indexed", i, statusColumn);
+		//		} // For
 			
 			} // If Update Index
 		
@@ -345,17 +345,19 @@ public class GUI extends JPanel implements ActionListener{
 	
 	//build main container
 		static void createAndShowGUI() {
-			
-			
-			
 			JFrame frame = new JFrame("Search Engine");
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			
+			frame.add(new GUI(), BorderLayout.CENTER);
+			
 			frame.setSize( 500, 500);
 			frame.setLocationRelativeTo( null ); // Center frame on screen
 			frame.setVisible( true );
 			frame.setResizable(false); // dont let user resize window to keep gui formatting constant 
-			frame.add(new GIU(), BorderLayout.CENTER);
-						
+			
+	//		frame.add(new GUI(), BorderLayout.CENTER);  
+			
+			// The frame was invisible because you set it to be visible before you added GUI
 			
 		}//end creatAndShowGUI()
 

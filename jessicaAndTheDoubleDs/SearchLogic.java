@@ -19,7 +19,7 @@ public class SearchLogic {
 		  		"SEARCH!!!", 
 		  		JOptionPane.INFORMATION_MESSAGE );
 				
-				sbStringToParse.append(txtSearchTerms.getText() );
+//				sbStringToParse.append(txtSearchTerms.getText() );
 				
 				StringBuilder sbResults = new StringBuilder();
 				sbResults.append( "No results found. \r\n \r\n" );
@@ -45,7 +45,7 @@ public class SearchLogic {
 				} // While
 				
 				// Write string to results text area
-				txtResults.setText( sbResults.toString() );
+	//			txtResults.setText( sbResults.toString() );
 				
 			} //search
     
