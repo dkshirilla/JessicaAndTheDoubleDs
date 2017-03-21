@@ -31,7 +31,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-public class GUI extends JPanel implements ActionListener{
+public class GUI extends JPanel{ //implements ActionListener{
 	
 	//Eclipse whines if this line isn't here...
 		private static final long serialVersionUID = 1L;
@@ -41,6 +41,10 @@ public class GUI extends JPanel implements ActionListener{
 		public static boolean andBtnSelected;
 		public static boolean phraseBtnSelected;
 		public static Object txtResults;
+		public static Object txtSearchTerms;
+		static DefaultTableModel fileTableModel = new DefaultTableModel();
+
+		public static Object fileTable;
 		
 		// long lastMod;
 		
@@ -48,57 +52,38 @@ public class GUI extends JPanel implements ActionListener{
 			//used to set tabs to top left
 			super (new GridLayout(1,1));
 			
-			//making classes accessible
-			new SearchLogic();			
-			new Index();	
-			
-			
-			
 			//Build tabs pane
 			JTabbedPane tabbedPane = new JTabbedPane();
+			//new TheHandler object for buttons
+			thehandler handler = new thehandler();
 			
 			// Add Search panel
 			JComponent searchPanel = textPanel( "" );
 			// Add Search tab
 			tabbedPane.addTab("Search", searchPanel);
 			
-			// These need to be accessible outside of the GIU method
-			// Search Tab text fields
-			JTextField txtSearchTerms = new JTextField( "Enter search terms here", 40 );
-			JTextArea txtResults = new JTextArea(22, 40);
+
 			
 			// Add border to Search Term text box
-			txtSearchTerms.setBorder(BorderFactory.createLineBorder(Color.black));
+			((JComponent) txtSearchTerms).setBorder(BorderFactory.createLineBorder(Color.black));
 			// Add Search Terms text box to panel
-			searchPanel.add(txtSearchTerms);
-			
-			
-				
-			//Create JTable for files tab
-			DefaultTableModel fileTableModel = new DefaultTableModel();
-			JTable fileTable = new JTable();
-			String[] columnNames = {"File","Status"};
-			fileTableModel.setColumnIdentifiers(columnNames);
-			fileTable.setModel(fileTableModel);
-			fileTable.setPreferredScrollableViewportSize(new Dimension(500,300));
-			JScrollPane jps = new JScrollPane(fileTable);
-			fileTable.setFillsViewportHeight(true);
-			
+			searchPanel.add((Component) txtSearchTerms);
+						
 			// Create buttons for search panel
 			JButton btnSearch = new JButton( "Search" );
 			btnSearch.setToolTipText("Click to search indexed files");
 			btnSearch.setActionCommand( "search" ); 
-		    btnSearch.addActionListener( this );
+		    btnSearch.addActionListener( handler );
 		    
 		    JRadioButton btnOr = new JRadioButton( "OR" );
 	        JRadioButton btnAnd = new JRadioButton( "AND" );
 	        JRadioButton btnPhrase = new JRadioButton( "Phrase" );
 	        btnOr.setActionCommand( "or" ); 
-		    btnOr.addActionListener( this );
+		    btnOr.addActionListener( handler );
 		    btnAnd.setActionCommand( "and" ); 
-		    btnAnd.addActionListener( this );
+		    btnAnd.addActionListener( handler );
 		    btnPhrase.setActionCommand( "phrase" ); 
-		    btnPhrase.addActionListener( this );
+		    btnPhrase.addActionListener( handler );
 	 
 	        // Group the radio buttons
 	        ButtonGroup group = new ButtonGroup();
@@ -115,10 +100,7 @@ public class GUI extends JPanel implements ActionListener{
 			// Initialize radio button status
 			Boolean orBtnSelected     = true,
 					andBtnSelected    = false,
-					phraseBtnSelected = false;
-			
-
-			
+					phraseBtnSelected = false;			
 
 			new StringBuilder();
 			
@@ -129,36 +111,49 @@ public class GUI extends JPanel implements ActionListener{
 			
 			// Add result text area to show matched files when search is completed
 			// Set line wrapping
-			txtResults.setLineWrap(true);
-			txtResults.setWrapStyleWord(true);
+			((JTextArea) txtResults).setLineWrap(true);
+			((JTextArea) txtResults).setWrapStyleWord(true);
 			// Add border to Results box
-			txtResults.setBorder(BorderFactory.createLineBorder(Color.black));
+			((JComponent) txtResults).setBorder(BorderFactory.createLineBorder(Color.black));
 			// Add Results box to panel
-			searchPanel.add(txtResults);
+			searchPanel.add((Component) txtResults);
 			
 			// Add File Upload/Update panel
 			JComponent files = textPanel("");
 			// Add Files tab 
 			tabbedPane.addTab("Files", files);
+			
 					
+			
+			//Create JTable for files tab
+			
+			JTable fileTable = new JTable();
+			String[] columnNames = {"File","Status"};
+			fileTableModel.setColumnIdentifiers(columnNames);
+			fileTable.setModel(fileTableModel);
+			fileTable.setPreferredScrollableViewportSize(new Dimension(500,300));
+			JScrollPane jps = new JScrollPane(fileTable);
+			fileTable.setFillsViewportHeight(true);
+		
+			//add jtable to file tab
+			files.add(jps);
+			
 			//create buttons for file tab
 			JButton btnAddFile = new JButton("Add File");
 			btnAddFile.setToolTipText("Open browse window to select and add a file");
 			btnAddFile.setActionCommand("addFile");
-			btnAddFile.addActionListener(this);
+			btnAddFile.addActionListener(handler);
 			
 			JButton btnRmvFile = new JButton("Remove File");
 			btnRmvFile.setToolTipText("Remove selected file");
 			btnRmvFile.setActionCommand("rmvFile");
-			btnRmvFile.addActionListener(this);
+			btnRmvFile.addActionListener(handler);
 			
 			JButton btnUpdateFiles = new JButton("Update Index");
 			btnUpdateFiles.setToolTipText("Update the index if they have been modified");
 			btnUpdateFiles.setActionCommand("updateFiles");
-			btnUpdateFiles.addActionListener(this);
-		
-			//add jtable to file tab
-			files.add(jps);
+			btnUpdateFiles.addActionListener(handler);
+			
 			//add buttons to file tab
 			files.add(btnAddFile);
 			files.add(btnRmvFile);
@@ -189,152 +184,65 @@ public class GUI extends JPanel implements ActionListener{
 			// Add tab and About panel
 			tabbedPane.addTab("About", aboutPanel);
 			
-			add(tabbedPane);
+			add(tabbedPane);			
+			
 		}
 		
 		// Event handler
-		public void actionPerformed(ActionEvent e) 
-		{
-			String nextLexeme = "",
-				   fileName	  = "";
+		private class thehandler implements ActionListener{
 			
-			if (e.getActionCommand().equals("search")) 
+			// Event handler
+			public void actionPerformed(ActionEvent e) 
 			{
-				SearchLogic.Search();
-
-			}// If Search
-			
-			else if (e.getActionCommand().equals("or"))
-			{
-				SearchLogic.or();
-
-			} // If OR
-			
-			else if (e.getActionCommand().equals("and"))
-			{
-				orBtnSelected     = false;
-				andBtnSelected    = true;
-				phraseBtnSelected = false;
-			} // If AND
-			
-			else if (e.getActionCommand().equals("phrase"))
-			{
-				orBtnSelected     = false;
-				andBtnSelected    = false;
-				phraseBtnSelected = true;
-			} // If PHRASE
-			
-			else if (e.getActionCommand().equals("addFile"))
-			{
-				JFileChooser chooser = new JFileChooser();
-				chooser.showOpenDialog(null);
-				File f = chooser.getSelectedFile();
-				
-				if (f != null)
+				if (e.getActionCommand().equals("search")) 
 				{
-					fileName = f.getAbsolutePath();
+					SearchLogic.doSearch();
+				} // If search
 				
-	//add file to jtable in file tab
-//				lastMod = f.lastModified();
-	//Date dt = new Date(lastMod);
-//				row[fileColumn] = fileName;
+				else if (e.getActionCommand().equals("or"))
+				{
+					orBtnSelected     = true;
+					andBtnSelected    = false;
+					phraseBtnSelected = false;
+				} // If OR
 				
-					// Update file table
-	//				row[fileColumn] = fileName;
-	//				row[statusColumn] = "Indexed";
-		//			fileTableModel.addRow(row);
-
-					// Increment number of files
-	//				++numFiles;
+				else if (e.getActionCommand().equals("and"))
+				{
+					orBtnSelected     = false;
+					andBtnSelected    = true;
+					phraseBtnSelected = false;
+				} // If AND
 				
-					// Add file name to data structure
-	//				fileNames.add(fileName);
+				else if (e.getActionCommand().equals("phrase"))
+				{
+					orBtnSelected     = false;
+					andBtnSelected    = false;
+					phraseBtnSelected = true;
+				} // If PHRASE
 				
-					// Create a reference to the file 
-					File file = new File(fileName);
-					
-					// Add last modified date/time of file to data structure
-	//				lastMod.add( file.lastModified() );
-
-					// Parse the file and add the words to the data structure
-	//				parseFile(file);
-					
-					// Write the updated data to the index file
-	//				writeIndexFile();
-					
-	// writeFilePath(fileName, f, numFiles);
-					
-				} // If file name not null
-				else // Handle possibility of null (no file selected), which would cause exception
-					JOptionPane.showMessageDialog( 
-							null, 
-							"You didn't select a file", 
-							"NO FILE SELECTED!!!", 
-							JOptionPane.WARNING_MESSAGE );
-			} // If Add File
+				else if (e.getActionCommand().equals("addFile"))
+				{
+					Index.addFile();
+				} // If Add File
+				
+				else if (e.getActionCommand().equals("rmvFile"))
+				{
+					Index.removeFile();
+				} // If Remove File
+				
+				else if (e.getActionCommand().equals("updateFiles"))
+				{
+					Index.updateIndex();
+				} // If Update Index
 			
-			else if (e.getActionCommand().equals("rmvFile"))
-			{
-				JOptionPane.showMessageDialog(null,"You clicked the remove file button!", "REMOVE!!",
-						JOptionPane.INFORMATION_MESSAGE);
-				
-	/* Need a way to select the file to be removed
-	 * Decrement number of files in index 
-	 * Remove file pathname from list of file pathnames
-	 * Eventually, the indexed words pertaining to this file will have to removed from the 
-	 * data structure (or at least not written back to disk), but this is probably too much 
-	 * for Part II of the project
-	 * Rewrite the index			
-	 */
-			} // If Remove File
-			
-			else if (e.getActionCommand().equals("updateFiles"))
-			{
-				JOptionPane.showMessageDialog(null,"You clicked the update index button!", "UPDATE!!",
-						JOptionPane.INFORMATION_MESSAGE);
-				
-	/* For each file in index...
-	 * 		Get the file timestamp from the file to be indexed 
-	 * 		Parse the file into words (can use getNextLexeme() or scanner()) 
-	 *      Update data structure 
-	 *      If file does not exist, remove it and its words from index
-	 * Rewrite the index
-	 * Update each file status display to "indexed" 			
-	*/
-			
-				// I did part of this (below), but more needs to be added  - Doug Linkhart
-				
-				// Need to remove files that no longer exist (and their contents) from index
-				
-				// Clear index so that it can be regenerated
-//				wordIndex.clear();
-							
-	//			for (int i = 0; i <= (numFiles - 1); ++i)
-	//			{
-					/* Create a reference to the file 
-	 		   		   and get its last modified date/time */
-		//			File file = new File(fileNames.get(i));
-			//		long timeModified = (long)file.lastModified();
-					
-					// Set the last modified parameter in the data structure
-		//			lastMod.set(i, timeModified);
-								
-	//				parseFile(file);
-					
-		//			writeIndexFile();
-					
-					// Update table
-	  //  		    fileTableModel.setValueAt("Indexed", i, statusColumn);
-		//		} // For
-			
-			} // If Update Index
-		
 		} // actionPerformed
-
+	}//thehandler
+		
+		
 	
 	
 	
-	protected static JComponent textPanel(String text){
+	protected JComponent textPanel(String text){
 		JPanel panel = new JPanel(false);
 		JLabel filler = new JLabel(text);
 		filler.setHorizontalAlignment(JLabel.CENTER);
@@ -347,17 +255,12 @@ public class GUI extends JPanel implements ActionListener{
 		static void createAndShowGUI() {
 			JFrame frame = new JFrame("Search Engine");
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			
+			//adding the tabbed pane to the JFrame
 			frame.add(new GUI(), BorderLayout.CENTER);
-			
 			frame.setSize( 500, 500);
 			frame.setLocationRelativeTo( null ); // Center frame on screen
 			frame.setVisible( true );
 			frame.setResizable(false); // dont let user resize window to keep gui formatting constant 
-			
-	//		frame.add(new GUI(), BorderLayout.CENTER);  
-			
-			// The frame was invisible because you set it to be visible before you added GUI
 			
 		}//end creatAndShowGUI()
 

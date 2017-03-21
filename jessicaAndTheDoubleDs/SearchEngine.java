@@ -6,18 +6,9 @@
  */
 package jessicaAndTheDoubleDs; // Team name
 
-// import javax.swing.table.DefaultTableModel;
-
 public class SearchEngine {	
 
-
-
 	public static void main(String[] args) {
-		
-		//making a reference to GUIclass
-//		GUI GIU = new GUI();
-		
-		// The GIU reference isn't necessary
 		
 		GUI.createAndShowGUI();
 		
