@@ -414,7 +414,7 @@ public class SearchEngine extends JPanel implements ActionListener{
 			Scanner addedFile = new Scanner(file);
 			while(addedFile.hasNext())
 			{
-				// Read and index words
+				// Read and index words//this is a test
 				wordIndex.add(addedFile.next()); 
 			} // While
 		
