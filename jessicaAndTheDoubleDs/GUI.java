@@ -40,11 +40,11 @@ public class GUI extends JPanel{ //implements ActionListener{
 		public static boolean orBtnSelected;
 		public static boolean andBtnSelected;
 		public static boolean phraseBtnSelected;
-		public static Object txtResults;
-		public static Object txtSearchTerms;
+		public static JTextArea txtResults= new JTextArea(25, 70);
+		public static JTextField txtSearchTerms= new JTextField( "Enter search terms here", 40 );
 		static DefaultTableModel fileTableModel = new DefaultTableModel();
 
-		public static Object fileTable;
+		public static JTable fileTable;
 		
 		// long lastMod;
 		
@@ -65,7 +65,8 @@ public class GUI extends JPanel{ //implements ActionListener{
 
 			
 			// Add border to Search Term text box
-			((JComponent) txtSearchTerms).setBorder(BorderFactory.createLineBorder(Color.black));
+
+			txtSearchTerms.setBorder(BorderFactory.createLineBorder(Color.black));
 			// Add Search Terms text box to panel
 			searchPanel.add((Component) txtSearchTerms);
 						

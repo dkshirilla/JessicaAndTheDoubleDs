@@ -14,7 +14,8 @@ import javax.swing.table.DefaultTableModel;
 public class Index {
 
 	
-	
+	final static int fileColumn = 0;
+	final static int statusColumn = 1;	
 	static File indexFile = new File( "index.txt" );
 
 	// Index data structure
@@ -60,8 +61,7 @@ public class Index {
 			//for jtable on file tab
 			DefaultTableModel fileTableModel = new DefaultTableModel();
 			Object[] row = new Object[2];
-			final int fileColumn = 0;
-			final int statusColumn = 1;	
+
 	
 			// Update file table
 			row[fileColumn] = fileName;
@@ -99,7 +99,7 @@ public class Index {
 	public static void removeFile()
 	{
 		// Get row selected by user for deletion
-		int rowToRemove = ( GUI.fileTable).getSelectedRow();
+		int rowToRemove =  GUI.fileTable.getSelectedRow();
 	
 		// Remove the row from the table
 		GUI.fileTableModel.removeRow(rowToRemove);
@@ -142,7 +142,7 @@ public class Index {
 			   parseFile(file);
 			
 			   // Update table
-		       GUI.fileTableModel.setValueAt("Indexed", i, GUI.statusColumn);
+		       GUI.fileTableModel.setValueAt("Indexed", i, statusColumn);
     		} // If file exists
     		else // File no longer exists...
     		{
