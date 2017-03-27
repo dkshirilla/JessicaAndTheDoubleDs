@@ -59,14 +59,14 @@ public class Index {
 		{
 			String fileName = f.getAbsolutePath();
 			//for jtable on file tab
-			DefaultTableModel fileTableModel = new DefaultTableModel();
+	//		DefaultTableModel fileTableModel = new DefaultTableModel();
 			Object[] row = new Object[2];
 
 	
 			// Update file table
 			row[fileColumn] = fileName;
 			row[statusColumn] = "Indexed";
-			fileTableModel.addRow(row);
+			GUI.fileTableModel.addRow(row);
 
 			// Increment number of files
 			++numFiles;

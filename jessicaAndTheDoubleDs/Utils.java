@@ -5,8 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class Utils {
-			
-
+	
 			public static void parseFile(File file)
 			{
 				try

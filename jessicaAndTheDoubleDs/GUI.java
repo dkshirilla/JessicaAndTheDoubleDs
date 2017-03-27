@@ -36,7 +36,7 @@ public class GUI extends JPanel{ //implements ActionListener{
 	//Eclipse whines if this line isn't here...
 		private static final long serialVersionUID = 1L;
 		
-        // These need to be accessable to other classes
+        // These need to be accessible to other classes
 		public static boolean orBtnSelected;
 		public static boolean andBtnSelected;
 		public static boolean phraseBtnSelected;
@@ -52,20 +52,17 @@ public class GUI extends JPanel{ //implements ActionListener{
 			//used to set tabs to top left
 			super (new GridLayout(1,1));
 			
-			//Build tabs pane
+			// Build tabbed pane
 			JTabbedPane tabbedPane = new JTabbedPane();
 			//new TheHandler object for buttons
-			thehandler handler = new thehandler();
+			theHandler handler = new theHandler();
 			
 			// Add Search panel
 			JComponent searchPanel = textPanel( "" );
 			// Add Search tab
 			tabbedPane.addTab("Search", searchPanel);
-			
-
-			
+				
 			// Add border to Search Term text box
-
 			txtSearchTerms.setBorder(BorderFactory.createLineBorder(Color.black));
 			// Add Search Terms text box to panel
 			searchPanel.add((Component) txtSearchTerms);
@@ -103,7 +100,7 @@ public class GUI extends JPanel{ //implements ActionListener{
 					andBtnSelected    = false,
 					phraseBtnSelected = false;			
 
-			new StringBuilder();
+			// new StringBuilder();
 			
 			// Set buttons to according to status that was initialized previously
 			btnOr.setSelected( orBtnSelected );
@@ -124,19 +121,16 @@ public class GUI extends JPanel{ //implements ActionListener{
 			// Add Files tab 
 			tabbedPane.addTab("Files", files);
 			
-					
-			
-			//Create JTable for files tab
-			
+			// Create JTable for files tab
 			JTable fileTable = new JTable();
-			String[] columnNames = {"File","Status"};
+			String[] columnNames = {"File", "Status"};
 			fileTableModel.setColumnIdentifiers(columnNames);
 			fileTable.setModel(fileTableModel);
-			fileTable.setPreferredScrollableViewportSize(new Dimension(500,300));
-			JScrollPane jps = new JScrollPane(fileTable);
+			fileTable.setPreferredScrollableViewportSize(new Dimension(740,360));
 			fileTable.setFillsViewportHeight(true);
-		
-			//add jtable to file tab
+			JScrollPane jps = new JScrollPane(fileTable);
+			
+			// Add jtable to file tab
 			files.add(jps);
 			
 			//create buttons for file tab
@@ -152,7 +146,7 @@ public class GUI extends JPanel{ //implements ActionListener{
 			
 			JButton btnUpdateFiles = new JButton("Update Index");
 			btnUpdateFiles.setToolTipText("Update the index if they have been modified");
-			btnUpdateFiles.setActionCommand("updateFiles");
+			btnUpdateFiles.setActionCommand("updateIndex");
 			btnUpdateFiles.addActionListener(handler);
 			
 			//add buttons to file tab
@@ -165,8 +159,8 @@ public class GUI extends JPanel{ //implements ActionListener{
 			sbAbout.append( "<html>" );
 			sbAbout.append( "<font face='Times New Roman'>" );
 			sbAbout.append( "<font size='+1'>");
-			sbAbout.append( "<br> Search Engine 1.1 <br>");
-			sbAbout.append( "<br> COP 2805  Project 3 <br>");
+			sbAbout.append( "<br> Search Engine 1.2 <br>");
+			sbAbout.append( "<br> COP 2805  Project 5 <br>");
 			sbAbout.append( "<font size='-1'>");
 			sbAbout.append( "<br> by Jessica and the Double Ds: <br>");
 			sbAbout.append( "<i> Douglas Linkhart <br>");
@@ -186,11 +180,10 @@ public class GUI extends JPanel{ //implements ActionListener{
 			tabbedPane.addTab("About", aboutPanel);
 			
 			add(tabbedPane);			
-			
 		}
 		
 		// Event handler
-		private class thehandler implements ActionListener{
+		private class theHandler implements ActionListener{
 			
 			// Event handler
 			public void actionPerformed(ActionEvent e) 
@@ -231,17 +224,14 @@ public class GUI extends JPanel{ //implements ActionListener{
 					Index.removeFile();
 				} // If Remove File
 				
-				else if (e.getActionCommand().equals("updateFiles"))
+				else if (e.getActionCommand().equals("updateIndex"))
 				{
 					Index.updateIndex();
 				} // If Update Index
 			
 		} // actionPerformed
-	}//thehandler
+	} // Class theHandler
 		
-		
-	
-	
 	
 	protected JComponent textPanel(String text){
 		JPanel panel = new JPanel(false);
@@ -258,7 +248,7 @@ public class GUI extends JPanel{ //implements ActionListener{
 			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			//adding the tabbed pane to the JFrame
 			frame.add(new GUI(), BorderLayout.CENTER);
-			frame.setSize( 500, 500);
+			frame.setSize( 800, 500);
 			frame.setLocationRelativeTo( null ); // Center frame on screen
 			frame.setVisible( true );
 			frame.setResizable(false); // dont let user resize window to keep gui formatting constant 
